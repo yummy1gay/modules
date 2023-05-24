@@ -2,9 +2,11 @@
 
 import asyncio
 import logging
+
 from telethon.tl.types import InputMediaDice
-from telethon.errors import PeerIdInvalidError
+
 from telethon import events
+
 from .. import loader, security, utils
 from telethon.errors import ChatSendMediaForbiddenError
 
@@ -12,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 @loader.tds
 class DiceMod(loader.Module):
-    """Подкрутить кубики теперь можно незаметно, ты можешь написать команду куда угодно, кубики бросятся в тот чат чье ChatID ты указал🕶"""
+    """yg_dice"""
 
     strings = {"name": "yg_dice"}
 
@@ -28,13 +30,25 @@ class DiceMod(loader.Module):
             "Mapping of emoji to possible values",
         )
 
-    async def delete_previous_dices(self, chat):
-        async for message in chat.history(limit=10):
-            if isinstance(message.media, InputMediaDice):
-                try:
-                    await message.delete()
-                except ChatSendMediaForbiddenError:
-                    pass
+from telethon.errors import PeerIdInvalidError
+
+@loader.tds
+class DiceMod(loader.Module):
+    """Крутой модуль для того чтобы чекать курс в реальном времени🕶"""
+
+    strings = {"name": "yg_dice"}
+
+    def __init__(self):
+        self.config = loader.ModuleConfig(
+            "POSSIBLE_VALUES",
+            {
+                "": [1, 2, 3, 4, 5, 6],
+                "🎲": [1, 2, 3, 4, 5, 6],
+                "🎯": [1, 2, 3, 4, 5, 6],
+                "🏀": [1, 2, 3, 4, 5],
+            },
+            "Mapping of emoji to possible values",
+        )
 
     @loader.unrestricted
     async def dicecmd(self, message):
@@ -47,12 +61,6 @@ class DiceMod(loader.Module):
             except (ValueError, IndexError, TypeError):
                 await message.edit("Либо ты не ввёл айди чата, либо он неправильный.")
                 return
-
-            if isinstance(chat, InputPeerUser):
-                await message.edit("Этот модуль работает только в группах и каналах.")
-                return
-
-            await self.delete_previous_dices(chat)
 
             try:
                 emoji = args[1]
@@ -101,12 +109,6 @@ class DiceMod(loader.Module):
             except (ValueError, IndexError, TypeError):
                 await message.edit("Либо ты не ввёл айди чата, либо он неправильный.")
                 return
-
-            if isinstance(chat, InputPeerUser):
-                await message.edit("Этот модуль работает только в группах и каналах.")
-                return
-
-            await self.delete_previous_dices(chat)
 
             try:
                 emoji = args[1]
