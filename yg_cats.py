@@ -10,7 +10,7 @@ class YGCatsMod(loader.Module):
 
     strings = {
         "name": "yg_cat"}
-
+    
     emojis = [
         "<emoji document_id=5348140027698227662>🙀</emoji>",
         "<emoji document_id=5348175255019988816>🙀</emoji>",
@@ -19,16 +19,19 @@ class YGCatsMod(loader.Module):
     ]
 
     async def ygcatscmd(self, message: Message):
-        """выводит случайное эмодзи котика каждые 10 секунд"""
-        used_emojis = []
+        """Выводит случайное эмодзи котика каждые 10 секунд"""
         while True:
-            available_emojis = [emoji for emoji in self.emojis if emoji not in used_emojis]
-            if not available_emojis:
-                used_emojis = []
-                available_emojis = self.emojis
-
-            random_emoji = random.choice(available_emojis)
-            used_emojis.append(random_emoji)
+            random_emoji = random.choice(self.emojis)
+            self.emojis.remove(random_emoji)
 
             await utils.answer(message, random_emoji)
+
+            if not self.emojis:
+                self.emojis = [
+                    "<emoji document_id=5348140027698227662>🙀</emoji>",
+                    "<emoji document_id=5348175255019988816>🙀</emoji>",
+                    "<emoji document_id=5348179601526892213>🙀</emoji>",
+                    "<emoji document_id=5348312457750260828>🙀</emoji>"
+                ]
+
             await asyncio.sleep(10)
