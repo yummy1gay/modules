@@ -113,7 +113,7 @@ class MeowCryptoManagerMod(loader.Module):
                     )
 
                     current_time = time.strftime("%H:%M:%S")
-                    form += f"\n\n<b><i>Последнее Обновление:</i></b> <b>{current_time}</b>"
+                    form += f"\n\n<i>Курс обновляется каждые 30сек</i>\n<b><i>Последнее Обновление:</i></b> <b>{current_time}</b>"
 
                     await utils.answer(message, form)
                 except KeyError:
@@ -126,4 +126,4 @@ class MeowCryptoManagerMod(loader.Module):
             if not update_state:
                 break
 
-            time.sleep(11)
+            time.sleep(30)
