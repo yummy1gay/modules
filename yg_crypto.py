@@ -1,5 +1,4 @@
-# meta developer: @yummy_gay
-
+import asyncio
 import random as r
 import requests
 import time
@@ -43,7 +42,7 @@ class MeowCryptoManagerMod(loader.Module):
         await utils.answer(message, self.strings("okey").format(args))
 
     async def вклвыклcmd(self, message: Message):
-        """Включить/выключить автообновление курса (каждые 30 сек)"""
+        """Включить/выключить автообновление курса (каждые 11 сек)"""
         current_state = self.db.get("defaultvalute", "update", True)
         new_state = not current_state
         self.db.set("defaultvalute", "update", new_state)
@@ -54,7 +53,7 @@ class MeowCryptoManagerMod(loader.Module):
             await utils.answer(message, "<b>Автообновление курса: выкл</b>")
 
     async def курсcmd(self, message: Message):
-        "<кол-во> <название монеты> смотерть курс"
+        "<кол-во> <название монеты> смотреть курс"
         args = utils.get_args_raw(message)
         tray = self.db.get("defaultvalute", "val", args)
         if tray == "":
@@ -68,6 +67,21 @@ class MeowCryptoManagerMod(loader.Module):
         except Exception:
             args_list = ["1", args_list[0]]
         coin = args_list[1].upper()
+
+        if coin == "ТОН":
+            coin = "TONCOIN"
+        
+        if coin == "ЮСД":
+            coin == "USD"
+        
+        if coin == "РУБ":
+            coin == "RUB"
+        
+        if coin == "ГРН":
+            coin == "UAH"
+        
+        if coin == "ЗЛ":
+            coin == "PLN"
 
         while True:
             api = requests.get(
@@ -112,8 +126,11 @@ class MeowCryptoManagerMod(loader.Module):
                         round(api["TONCOIN"] * count, 4),
                     )
 
-                    current_time = time.strftime("%H:%M:%S")
-                    form += f"\n\n<i>Курс обновляется каждые 30сек</i>\n<b><i>Последнее Обновление:</i></b> <b>{current_time}</b>"
+                    update_state = self.db.get("defaultvalute", "update", True)
+
+                    if update_state:
+                        current_time = time.strftime("%H:%M:%S")
+                        form += f"\n\n<i>Курс обновляется каждые 30сек</i>\n<b><i>Последнее Обновление:</i></b> <b>{current_time}</b>"
 
                     await utils.answer(message, form)
                 except KeyError:
@@ -121,9 +138,7 @@ class MeowCryptoManagerMod(loader.Module):
             except ValueError:
                 await utils.answer(message, self.strings["inc_args"])
 
-            update_state = self.db.get("defaultvalute", "update", True)
-
             if not update_state:
                 break
 
-            time.sleep(30)
+            await asyncio.sleep(11)
