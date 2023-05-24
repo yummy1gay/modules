@@ -43,7 +43,7 @@ class MeowCryptoManagerMod(loader.Module):
         await utils.answer(message, self.strings("okey").format(args))
 
     async def вклвыклcmd(self, message: Message):
-        """Включить/выключить автообновление курса (каждые 11 сек)"""
+        """Включить/выключить автообновление курса (каждые 30 сек)"""
         current_state = self.db.get("defaultvalute", "update", True)
         new_state = not current_state
         self.db.set("defaultvalute", "update", new_state)
