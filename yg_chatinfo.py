@@ -214,6 +214,8 @@ async def fetch_info(chat, event):
         caption += f"<b><emoji document_id=5465300082628763143>💬</emoji> Всего сообщений:</b> <i>{messages_sent_alt}</i>\n\n"
     if members is not None:
         caption += f"<b><emoji document_id=5372926953978341366>👥</emoji> Участников:</b> <i>{members}</i>\n\n"
+    if banned_users is not None:
+        caption += f"<b><emoji document_id=5472267631979405211>🚫</emoji> Пользователей в бане:</b> <i>{banned_users}</i>\n\n"
     if admins is not None:
         caption += f"<b><emoji document_id=5190498849440931467>👨‍💻</emoji> Админов:</b> <i>{admins}</i>\n\n"
     if bots_list:
