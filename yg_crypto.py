@@ -39,7 +39,7 @@ class MeowCryptoManagerMod(loader.Module):
 
         args = utils.get_args_raw(message)
         self.db.set("defaultvalute", "val", args)
-        await utils.answer(message, self.strings("okey").format(args))
+        await utils.answer(message, self.strings["okey"].format(args))
 
     async def вклвыклcmd(self, message: Message):
         """Включить/выключить автообновление курса (каждые 11 сек)"""
@@ -62,7 +62,7 @@ class MeowCryptoManagerMod(loader.Module):
             args = "1" + " " + str(tray)
         args_list = args.split(" ")
         try:
-            if len(args_list) == 1 and isinstance(float(args_list[0]), float) == True:
+            if len(args_list) == 1 and isinstance(float(args_list[0]), float):
                 args_list.append(str(tray))
         except Exception:
             args_list = ["1", args_list[0]]
@@ -70,18 +70,14 @@ class MeowCryptoManagerMod(loader.Module):
 
         if coin == "ТОН":
             coin = "TONCOIN"
-        
         if coin == "ЮСД":
-            coin == "USD"
-        
+            coin = "USD"
         if coin == "РУБ":
-            coin == "RUB"
-        
+            coin = "RUB"
         if coin == "ГРН":
-            coin == "UAH"
-        
+            coin = "UAH"
         if coin == "ЗЛ":
-            coin == "PLN"
+            coin = "PLN"
 
         while True:
             api = requests.get(
@@ -116,21 +112,21 @@ class MeowCryptoManagerMod(loader.Module):
                         smiles,
                         count,
                         coin,
-                        round(api["USD"] * count, 2),
-                        round(api["UAH"] * count, 2),
-                        round(api["PLN"] * count, 2),
-                        round(api["RUB"] * count, 2),
-                        round(api["KZT"] * count, 2),
-                        round(api["BTC"] * count, 4),
-                        round(api["ETH"] * count, 4),
-                        round(api["TONCOIN"] * count, 4),
+                        round(api.get("USD", 0) * count, 2),
+                        round(api.get("UAH", 0) * count, 2),
+                        round(api.get("PLN", 0) * count, 2),
+                        round(api.get("RUB", 0) * count, 2),
+                        round(api.get("KZT", 0) * count, 2),
+                        round(api.get("BTC", 0) * count, 4),
+                        round(api.get("ETH", 0) * count, 4),
+                        round(api.get("TONCOIN", 0) * count, 4),
                     )
 
                     update_state = self.db.get("defaultvalute", "update", True)
 
                     if update_state:
                         current_time = time.strftime("%H:%M:%S")
-                        form += f"\n\n<i>Курс обновляется каждые 30сек</i>\n<b><i>Последнее Обновление:</i></b> <b>{current_time}</b>"
+                        form += f"\n\n<i>Курс обновляется каждые 11 сек.</i>\n<b><i>Последнее Обновление:</i></b> <b>{current_time}</b>"
 
                     await utils.answer(message, form)
                 except KeyError:
