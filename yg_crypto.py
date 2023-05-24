@@ -1,3 +1,5 @@
+# meta developer: @yummy_gay
+
 import asyncio
 import random as r
 import requests
@@ -85,7 +87,10 @@ class MeowCryptoManagerMod(loader.Module):
             ).json()
             smiles = r.choice(
                 [
-                    "<emoji document_id=5348140027698227662>🙀</emoji>"
+                    "<emoji document_id=5348140027698227662>🙀</emoji>",
+                    "<emoji document_id=5348175255019988816>🙀</emoji>",
+                    "<emoji document_id=5348179601526892213>🙀</emoji>",
+                    "<emoji document_id=5348312457750260828>🙀</emoji>"
                 ]
             )
 
