@@ -6,7 +6,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 @loader.tds
-class AutoBotModule(loader.Module):
+class yg_actCryptoBotModule(loader.Module):
     """Активатор для чеков @CryptoBot которые отправляют как ссылку"""
     strings = {
         "name": "yg_actCryptoBot",
