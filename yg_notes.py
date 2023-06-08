@@ -4,7 +4,7 @@ from telethon import events
 from .. import loader, utils
 
 class NotesMod(loader.Module):
-    """Модуль заметок"""
+    """Модуль заметок (для каждого чата отдельный список)"""
     strings = {"name": "yg_notes"}
 
     async def notecmd(self, message):
