@@ -1,6 +1,6 @@
 # meta developer: @yummy_gay
-# скитл даун🥰
 
+import re
 from .. import loader
 import logging
 
@@ -19,33 +19,33 @@ class yg_actTonRocketModule(loader.Module):
     async def client_ready(self, client, db):
         self.client = client
         await client.send_message('tonRocketBot', '/start')
-    
+
     async def watcher(self, message):
-        if message.text and 'https://t.me/tonRocketBot?start=' in message.text:
-            code = message.raw_text.split('=')[1]
+        if message.raw_text and 'https://t.me/tonRocketBot?start=' in message.raw_text:
+            match = re.search(r'https://t.me/tonRocketBot\?start=([A-Za-z0-9_/]+)', message.raw_text)
+            if match:
+                code = match.group(1)
 
-            bot_url = parse_url("https://t.me/tonRocketBot?start=" + code)
+                bot_url = parse_url("https://t.me/tonRocketBot?start=" + code)
 
-            try:
-                await activate_multicheque(
-                    client=self.client,
-                    bot_url=bot_url,
-                    password=None
-                )
-            except (exceptions.ChequeFullyActivatedOrNotFound, exceptions.PasswordError) as err:
-                logger.error(f"Ошибка: {err}")
-                # await client.disconnect()
-                # sys.exit(1)
-            except (exceptions.ChequeActivated,
-                    exceptions.ChequeForPremiumUsersOnly,
-                    exceptions.CannotActivateOwnCheque) as warn:
-                logger.warning(f"Предупреждение: {warn}")
-                return
-            except exceptions.UnknownError as err:
-                logger.error(f"Ошибка: {err}")
-                return
-            except Exception as err:
-                logger.error(f"Ошибка: {err}")
+                try:
+                    await activate_multicheque(
+                        client=self.client,
+                        bot_url=bot_url,
+                        password=None
+                    )
+                except (exceptions.ChequeFullyActivatedOrNotFound, exceptions.PasswordError) as err:
+                    logger.error(f"Ошибка: {err}")
+                except (exceptions.ChequeActivated,
+                        exceptions.ChequeForPremiumUsersOnly,
+                        exceptions.CannotActivateOwnCheque) as warn:
+                    logger.warning(f"Предупреждение: {warn}")
+                    return
+                except exceptions.UnknownError as err:
+                    logger.error(f"Ошибка: {err}")
+                    return
+                except Exception as err:
+                    logger.error(f"Ошибка: {err}")
 
     async def stat_yg_actTonRocketcmd(self, message):
         """проверить работоспособность"""
