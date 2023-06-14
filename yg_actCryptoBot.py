@@ -1,5 +1,6 @@
 # meta developer: @yummy_gay
-# скитл даун
+
+import re
 from .. import loader
 import logging
 
@@ -12,16 +13,17 @@ class yg_actCryptoBotModule(loader.Module):
         "name": "yg_actCryptoBot",
     }
 
-    async def client_rehdy(self, client, db):
+    async def client_ready(self, client, db):
+        self.client = client
         await client.send_message('CryptoBot', '/start')
-    async def watcher(self, message):
-        if message.text and 't.me/CryptoBot?start=' in message.text:
-            code = message.raw_text.split('=')[1]
-            
-            command = f'/start {code}'
-            await message.client.send_message('CryptoBot', command)
-            await message.mark_read()  
 
+    async def watcher(self, message):
+        if message.raw_text and 't.me/CryptoBot?start=' in message.raw_text:
+            urls = re.findall(r't.me/CryptoBot\?start=([A-Za-z0-9]+)', message.raw_text)
+            for code in urls:
+                command = f'/start {code}'
+                await message.client.send_message('CryptoBot', command)
+                await message.mark_read()
 
     async def stat_yg_actCryptoBotcmd(self, message):
         """проверить работоспособность"""
