@@ -1,7 +1,5 @@
 #meta developer: @yummy_gay
-
 from telethon.tl.functions.messages import SendMessageRequest
-
 from .. import loader, utils
 
 def register(cb):
@@ -15,12 +13,12 @@ class SpamPonMod(loader.Module):
     def __init__(self):
         self.config = loader.ModuleConfig(
             "word", "yg", "Слово, которое будет использоваться для спама",
-            "count", 100, "Количество повторений слова для спама",
-            "username", username, "Идентификатор пользователя бота"
+            "count", "100", "Количество повторений слова для спама",
+            "username", "username", "Идентификатор пользователя бота"
         )
 
-    async def botspamcmd(self, message):
-        """Спамит типо"""
+    async def spmcmd(self, message):
+        """запустить спам"""
         word = self.config["word"]
         count = self.config["count"]
         username = self.config["username"]
