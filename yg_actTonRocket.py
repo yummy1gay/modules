@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 @loader.tds
 class yg_actTonRocketModule(loader.Module):
-    """Активатор для чеков @tonRocketBot, которые отправляются как ссылки"""
+    """Активатор чеков @tonRocketBot"""
 
     strings = {
         "name": "yg_actTonRocket",
