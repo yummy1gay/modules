@@ -1,16 +1,17 @@
-#meta developer: @yummy_gay
-from .. import loader
+# meta developer: @yummy_gay, @Billi_cum
+from .. import loader, utils
 import asyncio
 
 @loader.tds
-class yg_fakeloadModule(loader.Module):
+class YgFakeLoadModule(loader.Module):
     """Модуль для имитации загрузки"""
     strings = {
         "name": "yg_fakeload",
     }
 
-    async def fakeloadcmd(self, message):
-        """Имитировать процесс загрузки"""
+    async def flcmd(self, message):
+        """<text> имитировать процесс загрузки"""
+        args = utils.get_args_raw(message)
         progress = ["▎", "▍", "▌", "▊", "▉", "█", "█▎", "█▍", "█▌", "█▊", "█▉",
                     "██", "██▎", "██▍", "██▌", "██▊", "██▉", "███", "███▎", "███▍",
                     "███▌", "███▊", "███▉", "████", "████▎", "████▍", "████▌",
@@ -40,10 +41,5 @@ class yg_fakeloadModule(loader.Module):
             await message.edit(f"<b>{i * (100 // len(progress))}% {progress[i]}</b>")
             await asyncio.sleep(0.03)
         
-        await message.edit("<b>done!</b>")
-
-
-
-
-
-
+        done_text = f"<b>{args}</b>" if args else "<b>done!</b>"
+        await message.edit(done_text)
