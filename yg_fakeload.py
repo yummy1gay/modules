@@ -37,7 +37,7 @@ class yg_fakeloadModule(loader.Module):
         await asyncio.sleep(1)
         
         for i in range(len(progress)):
-            await message.edit(f"<b>{i * (100 // len(progress))}%   {progress[i]}</b>")
+            await message.edit(f"<b>{i * (100 // len(progress))}% {progress[i]}</b>")
             await asyncio.sleep(0.03)
         
         await message.edit("<b>done!</b>")
