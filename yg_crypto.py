@@ -1,5 +1,4 @@
 # meta developer: @yummy_gay
-
 import asyncio
 import random as r
 import requests
@@ -8,8 +7,13 @@ from telethon.tl.types import Message
 from .. import loader, utils
 
 
-class MeowCryptoManagerMod(loader.Module):
+class yg_crypto(loader.Module):
     """Крутой модуль для того чтобы чекать курс в реальном времени🕶"""
+
+    def __init__(self):
+        self.config = loader.ModuleConfig(
+            "update_interval", 11, "Interval for updating the exchange rate in seconds"
+        )
 
     strings = {
         "name": "yg_crypto",
@@ -44,7 +48,7 @@ class MeowCryptoManagerMod(loader.Module):
         await utils.answer(message, self.strings["okey"].format(args))
 
     async def вклвыклcmd(self, message: Message):
-        """Включить/выключить автообновление курса (каждые 11 сек)"""
+        """Включить/выключить автообновление курса (каждые 11 сек (можно изменить в конфиге))"""
         current_state = self.db.get("defaultvalute", "update", True)
         new_state = not current_state
         self.db.set("defaultvalute", "update", new_state)
@@ -127,11 +131,12 @@ class MeowCryptoManagerMod(loader.Module):
                         round(api.get("TONCOIN", 0) * count, 4),
                     )
 
+                    update_interval = self.config["update_interval"]
                     update_state = self.db.get("defaultvalute", "update", True)
 
                     if update_state:
                         current_time = time.strftime("%H:%M:%S")
-                        form += f"\n\n<i>Курс обновляется каждые 11 сек.</i>\n<b><i>Последнее Обновление:</i></b> <b>{current_time}</b>"
+                        form += f"\n\n<i>Курс обновляется каждые {update_interval} сек.</i>\n<b><i>Последнее Обновление:</i></b> <b>{current_time}</b>"
 
                     await utils.answer(message, form)
                 except KeyError:
@@ -142,4 +147,6 @@ class MeowCryptoManagerMod(loader.Module):
             if not update_state:
                 break
 
-            await asyncio.sleep(11)
+            await asyncio.sleep(update_interval)
+
+#i gay
