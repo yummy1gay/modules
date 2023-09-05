@@ -44,6 +44,7 @@ class FCKPricesMod(loader.Module):
 
                 if "not found!" in response.text:
                     await message.edit(f"<emoji document_id=5870657884844462243>❌</emoji> <b>Токен {name} не найден в базе FCK Analytics!</b>")
+                    await response.delete()
                     return
                 
                 data = response.text
