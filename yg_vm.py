@@ -6,7 +6,7 @@ from .. import loader, utils
 
 @loader.tds
 class VoiceModule(loader.Module):
-    """Converts music and video"""
+    """Converts music and video (required ffmpeg)"""
 
     strings = {"name": "yg_vm"}
 
