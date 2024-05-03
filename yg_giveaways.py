@@ -13,6 +13,20 @@ class yg_giveaways(loader.Module):
     strings = {"name": "yg_giveaways"}
 
     def __init__(self):
+        self.config = loader.ModuleConfig(
+            loader.ConfigValue(
+                "logs_username",
+                "",
+                "@username куда будут отправляться логи",
+                validator=loader.validators.Hidden(loader.validators.String()),
+            ),
+            loader.ConfigValue(
+                "logs_enabled",
+                True,
+                "отправка логов",
+                validator=loader.validators.Boolean()
+            )
+        )
         self.codes = {}
 
     async def client_ready(self, client, db):
@@ -35,9 +49,11 @@ class yg_giveaways(loader.Module):
                     except:
                         pass
             if chat_invites:
-                await self.send_invites(chat_invites)
+                await self.subscribe_to_chats(chat_invites)
                 await asyncio.sleep(1)
                 await message.click(data=b'join-giveaway')
+                await asyncio.sleep(0.1)
+                await message.delete()
                 
         if message.reply_markup:
             for row in message.reply_markup.rows:
@@ -58,15 +74,20 @@ class yg_giveaways(loader.Module):
                             await self.x(code)
                             self.codes[code] = True
 
-    async def send_invites(self, chat_invites):
-        invite_message = "<b>Было обнаружено {} канала(-ов) для обязательной подписки:</b>\n\n".format(len(chat_invites))
-        for index, (invite_link, is_public) in enumerate(chat_invites, start=1):
-            if is_public:
-                invite_message += "<b>{}.</b> <i>t.me/{}</i>\n".format(index, invite_link)
-            else:
-                invite_message += "<b>{}.</b> <i>t.me/+{}</i>\n".format(index, invite_link)
-        await self.client.send_message("CryptoBot", invite_message, link_preview=False)
-        await self.subscribe_to_chats(chat_invites)
+        if message.sender_id == 1559501630 and message.reply_markup:
+            for row in message.reply_markup.rows:
+                for button in row.buttons:
+                    if button.url.startswith("https://app.crypt.bot/giveaways"):
+                        giw_link = button.url
+                        await self.send_log_message(giw_link)
+                        await asyncio.sleep(0.1)
+                        await message.delete()
+            
+    async def send_log_message(self, giw_link):
+        username = self.config["logs_username"]
+        if self.config["logs_enabled"]:
+            if username:
+                await self.client.send_message(username, f"<b><emoji document_id=5195366520561092628>🎁</emoji> Зарегистрировался в новом розыгрыше!\n\n<emoji document_id=5870527201874546272>🔗</emoji> Все подробности: <a href='{giw_link}'>click</a></b>", link_preview=False)
 
     async def subscribe_to_chats(self, chat_invites):
         for invite_link, is_public in chat_invites:
@@ -90,8 +111,15 @@ class yg_giveaways(loader.Module):
         return None
 
     async def x(self, code):
-        await self.client.send_message("CryptoBot", f"/start G{code}")
+        msg = await self.client.send_message("CryptoBot", f"/start G{code}")
+        await asyncio.sleep(0.1)
+        await msg.delete()
 
     async def gwscmd(self, message):
         """проверить работоспособность"""
         await message.edit("<emoji document_id=5361836987642815474>🦋</emoji> <b>Модуль для автоматического участия в розыгрышах @CryptoBot работает</b>")
+
+    async def gwslogscmd(self, message):
+        """вкл/выкл отправку логов"""
+        self.config["logs_enabled"] = not self.config["logs_enabled"]
+        await message.edit(f"<emoji document_id=5891243564309942507>💬</emoji> <b>Отправка логов {'включена' if self.config['logs_enabled'] else 'выключена'}</b>")
