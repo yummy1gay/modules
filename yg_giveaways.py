@@ -79,9 +79,10 @@ class yg_giveaways(loader.Module):
                 for button in row.buttons:
                     if button.url.startswith("https://app.crypt.bot/giveaways"):
                         giw_link = button.url
-                        await self.send_log_message(giw_link)
-                        await asyncio.sleep(0.1)
-                        await message.delete()
+                        if not "Поздравляем!" in message.text:
+                            await self.send_log_message(giw_link)
+                            await asyncio.sleep(0.1)
+                            await message.delete()
             
     async def send_log_message(self, giw_link):
         username = self.config["logs_username"]
