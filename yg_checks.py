@@ -32,6 +32,12 @@ class yg_checks(loader.Module):
                 validator=loader.validators.Boolean()
             ),
             loader.ConfigValue(
+                "delete_shlak",
+                True,
+                "удаление шлак сообщений, типа просьба подписатся, либо ввести пароль",
+                validator=loader.validators.Boolean()
+            ),
+            loader.ConfigValue(
                 "no_track_users",
                 ["username"],
                 'чьи чеки не активировать (юзер указывать обязательно без @)',
@@ -80,6 +86,21 @@ class yg_checks(loader.Module):
                             self.sent_codes[code] = True
                             await self.send_log_message(event.message, code)
     
+                if self.config['delete_shlak']:
+                    if event.sender_id == 1559501630 and any(text in event.text for text in [
+                        "Чтобы активировать этот чек, подпишитесь на канал(ы).",
+                        "К сожалению, вы не можете активировать этот чек. Он предназначен для другого получателя.",
+                        "Введите пароль от чека для получения",
+                        "Этот чек уже активирован."
+                    ]):
+                        try:
+                            await event.delete()
+                            async for gmsg in self.client.iter_messages('CryptoBot', limit=1):
+                                await gmsg.delete()
+
+                        except Exception as e:
+                            print(f"{e}")
+
     async def send_log_message(self, message, code):
         username = self.config["logs_username"]
         if self.config["logs_enabled"]:

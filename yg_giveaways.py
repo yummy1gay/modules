@@ -83,6 +83,9 @@ class yg_giveaways(loader.Module):
                             await self.send_log_message(giw_link)
                             await asyncio.sleep(0.1)
                             await message.delete()
+        
+        if message.sender_id == 1559501630 and "Вы участник розыгрыша" in message.text:
+            await message.delete()
             
     async def send_log_message(self, giw_link):
         username = self.config["logs_username"]
