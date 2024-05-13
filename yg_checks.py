@@ -122,6 +122,11 @@ class yg_checks(loader.Module):
         self.config["logs_enabled"] = not self.config["logs_enabled"]
         await message.edit(f"<emoji document_id=5891243564309942507>💬</emoji> <b>Отправка логов {'включена' if self.config['logs_enabled'] else 'выключена'}</b>")
 
+    async def ygshlcmd(self, message):
+        """вкл/выкл удаление шлак сообщений"""
+        self.config["delete_shlak"] = not self.config["delete_shlak"]
+        await message.edit(f"<emoji document_id=5891243564309942507>💬</emoji> <b>Удаление шлак сообщений {'включено' if self.config['delete_shlak'] else 'выключено'}</b>")
+
     async def yglscmd(self, message):
         """вкл/выкл активацию чеков отправленных в личке"""
         self.config["track_private"] = not self.config["track_private"]
