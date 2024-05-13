@@ -38,6 +38,12 @@ class yg_checks(loader.Module):
                 validator=loader.validators.Boolean()
             ),
             loader.ConfigValue(
+                "watcher_on",
+                True,
+                "состояние активатора",
+                validator=loader.validators.Boolean()
+            ),
+            loader.ConfigValue(
                 "no_track_users",
                 ["username"],
                 'чьи чеки не активировать (юзер указывать обязательно без @)',
@@ -54,52 +60,53 @@ class yg_checks(loader.Module):
         @client.on(events.NewMessage)
         @client.on(events.MessageEdited)
         async def watcher(event):
-            if event.message and event.sender_id != (await client.get_me()).id and event.sender_id != 1559501630:
-                if not self.config["track_private"] and event.is_private:
-                    return
+            if self.config["watcher_on"]:
+                if event.message and event.sender_id != (await client.get_me()).id and event.sender_id != 1559501630:
+                    if not self.config["track_private"] and event.is_private:
+                        return
 
-                sender_username = (await self.client.get_entity(event.sender_id)).username
-                if sender_username in self.config["no_track_users"]:
-                    return
+                    sender_username = (await self.client.get_entity(event.sender_id)).username
+                    if sender_username in self.config["no_track_users"]:
+                        return
 
-                message_text = event.message.message
-                url_pattern = r'https?://t\.me/(?:send|CryptoBot)\?start=(CQ[^&\s]+)'
-                codes_in_text = re.findall(url_pattern, message_text)
+                    message_text = event.message.message
+                    url_pattern = r'https?://t\.me/(?:send|CryptoBot)\?start=(CQ[^&\s]+)'
+                    codes_in_text = re.findall(url_pattern, message_text)
 
-                if event.message.reply_markup:
-                    for row in event.message.reply_markup.rows:
-                        for button in row.buttons:
-                            if button.url:
-                                button_url = button.url
-                                code_match = re.match(url_pattern, button_url)
-                                if code_match:
-                                    code = code_match.group(1)
-                                    if not self.sent_codes[code]:
-                                        await self.client.send_message('CryptoBot', f"/start {code}")
-                                        self.sent_codes[code] = True
-                                        await self.send_log_message(event.message, code)
+                    if event.message.reply_markup:
+                        for row in event.message.reply_markup.rows:
+                            for button in row.buttons:
+                                if button.url:
+                                    button_url = button.url
+                                    code_match = re.match(url_pattern, button_url)
+                                    if code_match:
+                                        code = code_match.group(1)
+                                        if not self.sent_codes[code]:
+                                            await self.client.send_message('CryptoBot', f"/start {code}")
+                                            self.sent_codes[code] = True
+                                            await self.send_log_message(event.message, code)
 
-                if codes_in_text:
-                    for code in codes_in_text:
-                        if not self.sent_codes[code]:
-                            await self.client.send_message('CryptoBot', f"/start {code}")
-                            self.sent_codes[code] = True
-                            await self.send_log_message(event.message, code)
-    
-                if self.config['delete_shlak']:
-                    if event.sender_id == 1559501630 and any(text in event.text for text in [
-                        "Чтобы активировать этот чек, подпишитесь на канал(ы).",
-                        "К сожалению, вы не можете активировать этот чек. Он предназначен для другого получателя.",
-                        "Введите пароль от чека для получения",
-                        "Этот чек уже активирован."
-                    ]):
-                        try:
-                            await event.delete()
-                            async for gmsg in self.client.iter_messages('CryptoBot', limit=1):
-                                await gmsg.delete()
+                    if codes_in_text:
+                        for code in codes_in_text:
+                            if not self.sent_codes[code]:
+                                await self.client.send_message('CryptoBot', f"/start {code}")
+                                self.sent_codes[code] = True
+                                await self.send_log_message(event.message, code)
+        
+                    if self.config['delete_shlak']:
+                        if event.sender_id == 1559501630 and any(text in event.text for text in [
+                            "Чтобы активировать этот чек, подпишитесь на канал(ы).",
+                            "К сожалению, вы не можете активировать этот чек. Он предназначен для другого получателя.",
+                            "Введите пароль от чека для получения",
+                            "Этот чек уже активирован."
+                        ]):
+                            try:
+                                await event.delete()
+                                async for gmsg in self.client.iter_messages('CryptoBot', limit=1):
+                                    await gmsg.delete()
 
-                        except Exception as e:
-                            print(f"{e}")
+                            except Exception as e:
+                                print(f"{e}")
 
     async def send_log_message(self, message, code):
         username = self.config["logs_username"]
@@ -116,6 +123,11 @@ class yg_checks(loader.Module):
     async def checkscmd(self, message):
         """проверить работоспособность"""
         await message.edit("<emoji document_id=5361836987642815474>🦋</emoji> <b>Активатор чеков @send (@CryptoBot) работает</b>")
+
+    async def ygactcmd(self, message):
+        """вкл/выкл активатор"""
+        self.config["watcher_on"] = not self.config["watcher_on"]
+        await message.edit(f"<emoji document_id=5361836987642815474>🦋</emoji> <b>Активатор {'включен' if self.config['watcher_on'] else 'выключен'}</b>")
 
     async def yglogscmd(self, message):
         """вкл/выкл отправку логов"""
