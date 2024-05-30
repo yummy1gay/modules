@@ -53,7 +53,7 @@ from .. import loader
 
 @loader.tds
 class yg_blum(loader.Module):
-    """играет в игры в @BlumCryptoBot (За 1 игру выдаёт 230 - 240 $BLUM)"""
+    """Играет в игры в @BlumCryptoBot (За 1 игру выдаёт 230 - 240 $BLUM)"""
 
     strings = {"name": "yg_blum"}
 
