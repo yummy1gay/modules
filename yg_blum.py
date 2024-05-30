@@ -84,7 +84,7 @@ class yg_blum(loader.Module):
         return "Bearer" + token
 
     async def blumcmd(self, message):
-        """играет игры на все ваши билеты, и в конце показывает сколько в итоге вышло"""
+        """играет на все ваши билеты, и в конце показывает сколько в итоге вышло"""
         token = await self.login()
         head = {
             'Authorization': token,
