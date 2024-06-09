@@ -112,7 +112,8 @@ class yg_blum(loader.Module):
                         await message.edit("<emoji document_id=5371035398841571673>💩</emoji> Серверам <a href='https://t.me/BlumCryptoBot'><b>Blum</b></a> сейчас очень плохо. Попробуйте позже!")
                         return
                 await asyncio.sleep(random.randrange(30, 60, 5))
-                points = random.randint(self.config["random_points"])
+                min_points, max_points = map(int, self.config["random_points"].strip('[]').split(','))
+                points = random.randint(min_points, max_points)
                 await self.scraper.post('https://game-domain.blum.codes/api/v1/game/claim', headers=head, json={
                     "gameId": game_id, "points": points})
                 await message.edit(f'<emoji document_id=5852496924870971453>🐾</emoji> <b>{i + 1} / {count} игр</b>')
