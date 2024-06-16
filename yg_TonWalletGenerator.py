@@ -77,8 +77,8 @@ class TonWalletGenerator(loader.Module):
             
             response = (
                 f"<b>Адрес:</b>\n<code>{wallet_address}</code>\n\n"
-                f"<b>Сид-фраза:</b>\n<pre>{mnemonics_str}</pre>\n\n"
-                f"<b>Скопировать:</b> <code>{mnemonics_copy}</code>"
+                f"<b>Сид-фраза:</b>\n<pre>{mnemonics_str}</pre>\n"
+                f"\n\n<b>Скопировать:</b> <code>{mnemonics_copy}</code>"
             )
 
             await message.edit(response)
