@@ -7,7 +7,7 @@ from telethon import functions, types
 from telethon.tl.functions.account import UpdateProfileRequest, UpdateEmojiStatusRequest
 from telethon.tl.functions.users import GetFullUserRequest
 
-from .. import loader, utils  # type: ignore
+from .. import loader, utils
 
 @loader.tds
 class CuMod(loader.Module):
