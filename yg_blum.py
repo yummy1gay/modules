@@ -46,12 +46,15 @@ import asyncio
 import random
 from aiocfscrape import CloudflareScraper
 import aiohttp
+import json
+from datetime import datetime, timedelta
+import os
 
 from .. import loader
 
 @loader.tds
 class yg_blum(loader.Module):
-    """Играет в игры в @BlumCryptoBot (За 1 игру выдаёт 150 - 250 $BLUM)"""
+    """Играет в игры в @BlumCryptoBot, и автоматически забирает ежедневную награду"""
 
     strings = {"name": "yg_blum"}
 
@@ -62,6 +65,24 @@ class yg_blum(loader.Module):
                 "150, 250",
                 "Рандомное кол-во поинтов за одну игру, вводить в формате: 0, 0. Макс. кол-во 280",
                 validator=loader.validators.Hidden(loader.validators.String()),
+            ),
+            loader.ConfigValue(
+                "logs_username",
+                "",
+                "@username канала/чята для логов (если вы хотите сохранять логи в избранном, укажите здесь 'me'; без @)",
+                validator=loader.validators.Hidden(loader.validators.String()),
+            ),
+            loader.ConfigValue(
+                "running_on",
+                False,
+                "script status",
+                validator=loader.validators.Boolean()
+            ),
+            loader.ConfigValue(
+                "auto_play",
+                False,
+                "играть ли в игры автоматически когда появляются билеты? (True - да, False - нет)",
+                validator=loader.validators.Boolean()
             )
         )
 
@@ -69,6 +90,9 @@ class yg_blum(loader.Module):
         self.client = client
         headers = {'User-Agent': generate_random_user_agent(device_type='android', browser_type='chrome')}
         self.scraper = CloudflareScraper(headers=headers, timeout=aiohttp.ClientTimeout(total=60))
+        self.file = "blum.json"
+
+        asyncio.create_task(self.blum())
 
     async def get_tg_web_data(self):
         web_view = await self.client(RequestWebViewRequest(
@@ -91,8 +115,88 @@ class yg_blum(loader.Module):
         token = resp_json.get("token").get("access")
         return "Bearer " + token
 
+    async def claim(self):
+        try:
+            token = await self.login()
+            head = {
+                'Authorization': token,
+                'Accept': 'application/json',
+                'User-Agent': generate_random_user_agent(device_type='android', browser_type='chrome')
+            }
+
+            resp = await self.scraper.post("https://game-domain.blum.codes/api/v1/daily-reward?offset=-180", headers=head)
+            resp_text = await resp.text()
+
+            return True if resp_text == 'OK' else resp_text
+        except Exception as e:
+            self.log(f"<emoji document_id=5240241223632954241>🚫</emoji> <b>Error occurred during claim daily reward:</b> <code>{e}</code>")
+
+    async def log(self, message):
+        if self.config["logs_username"]:
+            await self.client.send_message(self.config["logs_username"], message)
+
+    async def playcmd(self, message):
+        """<кол-во> - играет на указанное кол-во игр или на все билеты, если кол-во не указано"""
+        kok = message.text.split()
+        if len(kok) > 1:
+            try:
+                games = int(kok[1])
+            except ValueError:
+                await message.edit("<emoji document_id=5371035398841571673>💩</emoji> <b>Команда введена не правильно! Кол-во игр должно быть числом. Например:</b> <code>.blum 5</code>")
+                return
+        else:
+            games = None
+
+        token = await self.login()
+        head = {
+            'Authorization': token,
+            'Accept': 'application/json',
+            'User-Agent': generate_random_user_agent(device_type='android', browser_type='chrome')
+        }
+        async with self.scraper.get('https://game-domain.blum.codes/api/v1/user/balance', headers=head) as resp:
+            count = (await resp.json())['playPasses']
+        
+        if games is None or games > count:
+            games = count
+
+        total_point = 0
+        if games != 0:
+            await message.edit("<emoji document_id=5371057462088570593>😋</emoji> <b>Начал играть...</b>")
+            for i in range(games):
+                async with self.scraper.post('https://game-domain.blum.codes/api/v1/game/play', headers=head) as post_id:
+                    try:
+                        game_id = (await post_id.json())['gameId']
+                    except KeyError:
+                        await message.edit("<emoji document_id=5371035398841571673>💩</emoji> <b>Серверам <a href='https://t.me/BlumCryptoBot'><b>Blum</b></a> сейчас очень плохо. Попробуйте позже!</b>")
+                        return
+                await asyncio.sleep(random.randrange(30, 60, 5))
+                min_points, max_points = map(int, self.config["random_points"].strip('[]').split(','))
+                points = random.randint(min_points, max_points)
+                await self.scraper.post('https://game-domain.blum.codes/api/v1/game/claim', headers=head, json={
+                    "gameId": game_id, "points": points})
+                await message.edit(f'<emoji document_id=5852496924870971453>🐾</emoji> <b>{i + 1} / {games} игр</b>')
+                await asyncio.sleep(random.randint(1, 5))
+                total_point += points
+            await message.edit(f"<emoji document_id=5350746136544037083>🤑</emoji> <b>Всего зафармленно $BLUM:</b> <code>{total_point}</code>")
+        else:
+            await message.edit("<emoji document_id=5460972181523537679>😞</emoji> <b>Нету билетов для игры :(</b>")
+
     async def blumcmd(self, message):
-        """играет на все ваши билеты, и в конце показывает сколько в итоге вышло"""
+        """вкл/выкл скрипт"""
+        self.config["running_on"] = not self.config["running_on"]
+        if self.config["running_on"]:
+            asyncio.create_task(self.blum())
+        await message.edit(f"<emoji document_id=5350746136544037083>🤑</emoji> <b>Скрипт для <b><a href='https://t.me/BlumCryptoBot'>Blum</a></b> {'<b>включен</b>' if self.config['running_on'] else '<b>выключен</b>'}</b>")
+
+    async def autoplaycmd(self, message):
+        """вкл/выкл автоматическую игру на все билеты"""
+        self.config["auto_play"] = not self.config["auto_play"]
+        if self.config["auto_play"]:
+            asyncio.create_task(self.blum())
+        await message.edit(f"<emoji document_id=5350746136544037083>🤑</emoji> <b>Автоматическая игра на все билеты {'<b>включена</b>' if self.config['auto_play'] else '<b>выключена</b>'}</b>")
+
+    async def play(self):
+        """play all games 😈😈"""
         token = await self.login()
         head = {
             'Authorization': token,
@@ -103,28 +207,29 @@ class yg_blum(loader.Module):
             count = (await resp.json())['playPasses']
         total_point = 0
         if count != 0:
-            await message.edit("<emoji document_id=5371057462088570593>😋</emoji> <b>Начал играть...</b>")
+            if self.config["logs_username"]:
+                log = await self.client.send_message(self.config["logs_username"], "<emoji document_id=5371057462088570593>😋</emoji> <b>Начал играть...</b>")
             for i in range(count):
                 async with self.scraper.post('https://game-domain.blum.codes/api/v1/game/play', headers=head) as post_id:
                     try:
                         game_id = (await post_id.json())['gameId']
                     except KeyError:
-                        await message.edit("<emoji document_id=5371035398841571673>💩</emoji> Серверам <a href='https://t.me/BlumCryptoBot'><b>Blum</b></a> сейчас очень плохо. Попробуйте позже!")
+                        await log.edit("<emoji document_id=5371035398841571673>💩</emoji> <b>Серверам <a href='https://t.me/BlumCryptoBot'><b>Blum</b></a> сейчас очень плохо. Попробуйте позже!</b>")
                         return
                 await asyncio.sleep(random.randrange(30, 60, 5))
                 min_points, max_points = map(int, self.config["random_points"].strip('[]').split(','))
                 points = random.randint(min_points, max_points)
                 await self.scraper.post('https://game-domain.blum.codes/api/v1/game/claim', headers=head, json={
                     "gameId": game_id, "points": points})
-                await message.edit(f'<emoji document_id=5852496924870971453>🐾</emoji> <b>{i + 1} / {count} игр</b>')
+                await log.edit(f'<emoji document_id=5852496924870971453>🐾</emoji> <b>{i + 1} / {count} игр</b>')
                 await asyncio.sleep(random.randint(1, 5))
                 total_point += points
-            await message.edit(f"<emoji document_id=5350746136544037083>🤑</emoji> <b>Всего зафармленно $BLUM:</b> <code>{total_point}</code>")
+            await log.edit(f"<emoji document_id=5350746136544037083>🤑</emoji> <b>Всего зафармленно $BLUM:</b> <code>{total_point}</code>")
         else:
-            await message.edit("<emoji document_id=5460972181523537679>😞</emoji> <b>Нету билетов для игры :(</b>")
+            await log.edit("<emoji document_id=5460972181523537679>😞</emoji> <b>Нету билетов для игры :( (what??)</b>")
 
-    async def balancecmd(self, message):
-        """показывает баланс из @BlumCryptoBot"""
+    async def balance(self):
+        """get user balance info"""
         token = await self.login()
         head = {
             'Authorization': token,
@@ -137,13 +242,64 @@ class yg_blum(loader.Module):
         balance = resp_json.get("availableBalance")
         play_passes = resp_json.get("playPasses")
 
+        return balance, play_passes
+
+    async def balancecmd(self, message):
+        """показывает баланс из @BlumCryptoBot"""
+        await message.edit("<emoji document_id=5215484787325676090>🕐</emoji> <b>Получаю информацию...</b>")
+
+        last_run = self.get()
+        if last_run:
+            next_check_in = last_run + timedelta(hours=12)
+            remaining_time = next_check_in - datetime.now()
+            hours_remaining = remaining_time.total_seconds() // 3600
+            minutes_remaining = (remaining_time.total_seconds() % 3600) // 60
+        else:
+            hours_remaining, minutes_remaining = "Unknown", "Unknown"
+
+        balance, play_passes = await self.balance()
+
         balance_message = (
             f"<emoji document_id=5375296873982604963>💰</emoji> <b>Баланс:</b>\n\n"
             f"<emoji document_id=5350746136544037083>🤑</emoji> <b>$BLUM:</b> <code>{balance}</code>\n"
-            f"<emoji document_id=5377599075237502153>🎟</emoji> <b>Билеты:</b> <code>{play_passes}</code>"
+            f"<emoji document_id=5377599075237502153>🎟</emoji> <b>Билеты:</b> <code>{play_passes}</code>\n"
+            f"<emoji document_id=5451732530048802485>⏳</emoji> <b>Следущий чек-ин будет доступен через:</b> <code>{int(hours_remaining)}ч {int(minutes_remaining)}м</code>"
         )
 
         await message.edit(balance_message)
+
+    async def blum(self) -> None:
+        while self.config["running_on"]:
+            if self.config["running_on"]:
+                last_run = self.get()
+                if not last_run or (datetime.now() - last_run) > timedelta(hours=12):
+                    try:
+                        await self.claim()
+                        await self.log(f"<emoji document_id=5307973935927663936>✅</emoji> <b>Успешно забрал ежедневную награду (наверное)</b>")
+
+                        if self.config["auto_play"]:
+                            balance, play_passes = await self.balance()
+                            if play_passes > 0:
+                                await self.play()
+
+                        self.save()
+
+                    except Exception as e:
+                        await self.log(f"<emoji document_id=5801007040155358213>😵</emoji> <b>Error in def blum:</b> <code>{e}</code> <i>(please report this - @yummy1gay)</i>")
+            await asyncio.sleep(3600)
+
+    def save(self):
+        """Save the current time."""
+        with open(self.file, "w") as f:
+            json.dump({"last_run": datetime.now().isoformat()}, f)
+
+    def get(self):
+        """Get the last run time."""
+        if os.path.exists(self.file):
+            with open(self.file, "r") as f:
+                data = json.load(f)
+                return datetime.fromisoformat(data["last_run"])
+        return None
 
 def generate_random_user_agent(device_type='android', browser_type='chrome'):
     chrome_versions = list(range(110, 127))
@@ -207,5 +363,3 @@ def generate_random_user_agent(device_type='android', browser_type='chrome'):
         elif browser_type == 'firefox':
             return (f"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:{browser_version}.0) Gecko/{browser_version}.0 "
                     f"Firefox/{browser_version}.0")
-
-    return None
