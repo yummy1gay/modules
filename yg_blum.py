@@ -263,7 +263,7 @@ class yg_blum(loader.Module):
             f"<emoji document_id=5375296873982604963>💰</emoji> <b>Баланс:</b>\n\n"
             f"<emoji document_id=5350746136544037083>🤑</emoji> <b>$BLUM:</b> <code>{balance}</code>\n"
             f"<emoji document_id=5377599075237502153>🎟</emoji> <b>Билеты:</b> <code>{play_passes}</code>\n"
-            f"<emoji document_id=5451732530048802485>⏳</emoji> <b>Следущий чек-ин будет доступен через:</b> <code>{int(hours_remaining)}ч {int(minutes_remaining)}м</code>"
+            f"<emoji document_id=5451732530048802485>⏳</emoji> <b>Следующий чек-ин будет доступен через:</b> <code>{int(hours_remaining)}ч {int(minutes_remaining)}м</code>"
         )
 
         await message.edit(balance_message)
