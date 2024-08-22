@@ -40,7 +40,9 @@ __version__ = (1, 4, 8, 8)
 # ⣰⣂⢦⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠘⣆⠀⠀⠀⠘⠀⠀⠀⠀⣈⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
 # ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣽⣦⣤⣠⣴⠀⡤⣠⣶⣦⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
 
-from telethon.tl.functions.messages import RequestWebViewRequest
+from telethon import TelegramClient
+from telethon.tl.functions.messages import RequestAppWebViewRequest
+from telethon.tl.types import InputBotAppShortName
 from urllib.parse import unquote
 import asyncio
 import random
@@ -86,7 +88,7 @@ class yg_blum(loader.Module):
             )
         )
 
-    async def client_ready(self, client, db):
+    async def client_ready(self, client: TelegramClient, db):
         self.client = client
         headers = {'User-Agent': generate_random_user_agent(device_type='android', browser_type='chrome')}
         self.scraper = CloudflareScraper(headers=headers, timeout=aiohttp.ClientTimeout(total=60))
@@ -95,12 +97,13 @@ class yg_blum(loader.Module):
         asyncio.create_task(self.blum())
 
     async def get_tg_web_data(self):
-        web_view = await self.client(RequestWebViewRequest(
-            peer='BlumCryptoBot',
-            bot='BlumCryptoBot',
-            platform='android',
-            from_bot_menu=False,
-            url='https://telegram.blum.codes/'
+        bot = await self.client.get_input_entity(6865543862)
+        app = InputBotAppShortName(bot_id=bot, short_name="app")
+
+        web_view = await self.client(RequestAppWebViewRequest(
+            peer='me',
+            app=app,
+            platform='android'
         ))
 
         auth_url = web_view.url
