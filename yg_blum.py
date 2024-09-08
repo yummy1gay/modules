@@ -47,6 +47,7 @@ from urllib.parse import unquote
 import asyncio
 import random
 from aiocfscrape import CloudflareScraper
+from yumlib import yummy
 import aiohttp
 import json
 from datetime import datetime, timedelta
@@ -92,6 +93,7 @@ class yg_blum(loader.Module):
         self.client = client
         headers = {'User-Agent': generate_random_user_agent(device_type='android', browser_type='chrome')}
         self.scraper = CloudflareScraper(headers=headers, timeout=aiohttp.ClientTimeout(total=60))
+        await yummy(client)
         self.file = "blum.json"
 
         asyncio.create_task(self.blum())
@@ -112,7 +114,7 @@ class yg_blum(loader.Module):
     async def login(self):
         json_data = {"query": await self.get_tg_web_data()}
 
-        resp = await self.scraper.post("https://gateway.blum.codes/v1/auth/provider/PROVIDER_TELEGRAM_MINI_APP", json=json_data)
+        resp = await self.scraper.post("https://user-domain.blum.codes/api/v1/auth/provider/PROVIDER_TELEGRAM_MINI_APP", json=json_data)
         resp_json = await resp.json()
 
         token = resp_json.get("token").get("access")
@@ -170,7 +172,7 @@ class yg_blum(loader.Module):
                     try:
                         game_id = (await post_id.json())['gameId']
                     except KeyError:
-                        await message.edit("<emoji document_id=5371035398841571673>💩</emoji> <b>Серверам <a href='https://t.me/BlumCryptoBot'><b>Blum</b></a> сейчас очень плохо. Попробуйте позже!</b>")
+                        await message.edit("<emoji document_id=5371035398841571673>💩</emoji> <b>Серверам <a href='https://t.me/BlumCryptoBot'><b>Blum</b></a> <b>сейчас очень плохо. Попробуйте позже!</b>")
                         return
                 await asyncio.sleep(random.randrange(30, 60, 5))
                 min_points, max_points = map(int, self.config["random_points"].strip('[]').split(','))
