@@ -111,7 +111,7 @@ class yg_ocr(loader.Module):
 
     @loader.command()
     async def trocr(self, m):
-        """Распознать и перевести текст на изображении"""
+        """распознать и перевести текст на изображении"""
         t = await self.p(m)
         if t:
             n = await self.t(t, m)
