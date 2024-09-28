@@ -31,3 +31,4 @@ yg_vm
 yg_wallet
 yg_whales
 yg_xxx
+yg_prem
