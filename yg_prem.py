@@ -132,7 +132,6 @@ class yg_prem(loader.Module):
                 return
             
             updated_peers = folder.include_peers + [channel]
-            await self.log(f"Добавление канала: {channel} в папку: {folder.title}")
 
             updated_folder = DialogFilter(
                 id=folder_id,
