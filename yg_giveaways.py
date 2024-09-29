@@ -1,14 +1,30 @@
-#meta developer: @yummy1gay
+__version__ = (1, 4, 8, 8)
+
+# This file is a part of Hikka Userbot
+# Code is NOT licensed under CC-BY-NC-ND 4.0 unless otherwise specified.
+# 🌐 https://github.com/hikariatama/Hikka
+
+# You CAN edit this file without direct permission from the author.
+# You can redistribute this file with any modifications.
+
+# meta developer: @yg_modules
+# scope: hikka_only
+# scope: hikka_min 1.6.3
+
+# █▄█ █░█ █▀▄▀█ █▀▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄ █▀
+# ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
 
 import re
 from telethon.tl.functions.messages import ImportChatInviteRequest
 from telethon.tl.functions.channels import JoinChannelRequest
-from .. import loader
 import asyncio
+from yumlib import yummy
+
+from .. import loader
 
 @loader.tds
 class yg_giveaways(loader.Module):
-    """Модуль для автоматического участия в розыгрышах @CryptoBot"""
+    """Модуль для автоматического участия в розыгрышах @CryptoBot (неактуально)"""
 
     strings = {"name": "yg_giveaways"}
 
@@ -31,6 +47,7 @@ class yg_giveaways(loader.Module):
 
     async def client_ready(self, client, db):
         await client.send_message('CryptoBot', '/start')
+        await yummy(client)
 
     async def watcher(self, message):
         if message.sender_id == 1559501630 and message.reply_markup and "Crypto Bot" in message.text:
