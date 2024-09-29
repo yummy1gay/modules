@@ -1,7 +1,22 @@
-#meta developer: @D4n13l3k00, @yummy1gay
+__version__ = (1, 4, 8, 8)
+
+# This file is a part of Hikka Userbot
+# Code is NOT licensed under CC-BY-NC-ND 4.0 unless otherwise specified.
+# 🌐 https://github.com/hikariatama/Hikka
+
+# You CAN edit this file without direct permission from the author.
+# You can redistribute this file with any modifications.
+
+# meta developer: @yg_modules, @D4n13l3k00
+# scope: hikka_only
+# scope: hikka_min 1.6.3
+
+# █▄█ █░█ █▀▄▀█ █▀▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄ █▀
+# ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
 
 import os
 from asyncio import sleep
+from yumlib import yummy
 
 from telethon import functions, types
 from telethon.tl.functions.account import UpdateProfileRequest, UpdateEmojiStatusRequest
@@ -15,6 +30,9 @@ class CuMod(loader.Module):
 
     strings = {"name": "CopyUser"}
 
+    async def client_ready(self, client, db):
+        await yummy(client)
+    
     @loader.owner
     async def cucmd(self, message):
         """.cu <s> <a> <reply/@username>
