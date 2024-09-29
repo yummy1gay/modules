@@ -2,7 +2,6 @@ yg_balance
 yg_base64
 yg_blum
 yg_captcha
-yg_cats
 yg_chatid
 yg_chatinfo
 yg_checks
@@ -15,7 +14,6 @@ yg_fakeload
 yg_giveaways
 yg_notes
 yg_ocr
-yg_pohui
 yg_rickroll
 yg_sendmsg
 yg_slot
