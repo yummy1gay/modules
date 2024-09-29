@@ -1,10 +1,24 @@
-# meta developer: @yummy_gay
+__version__ = (1, 4, 8, 8)
+
+# This file is a part of Hikka Userbot
+# Code is NOT licensed under CC-BY-NC-ND 4.0 unless otherwise specified.
+# 🌐 https://github.com/hikariatama/Hikka
+
+# You CAN edit this file without direct permission from the author.
+# You can redistribute this file with any modifications.
+
+# meta developer: @yg_modules
+# scope: hikka_only
+# scope: hikka_min 1.6.3
+
+# █▄█ █░█ █▀▄▀█ █▀▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄ █▀
+# ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
 
 from deep_translator import GoogleTranslator
 from langdetect import detect
+from yumlib import yummy
 
 from .. import loader, utils
-
 
 @loader.tds
 class переводMod(loader.Module):
@@ -12,6 +26,9 @@ class переводMod(loader.Module):
 
     strings = {"name": "yg_translate"}
 
+    async def client_ready(self, client, db):
+        await yummy(client)
+    
     @loader.command("перевод", aliases=["tr"])
     async def пcmd(self, message):
         """перевести текст на несколько языков"""
