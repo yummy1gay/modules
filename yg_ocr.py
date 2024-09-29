@@ -4,14 +4,15 @@ __version__ = (1, 4, 8, 8)
 # Code is NOT licensed under CC-BY-NC-ND 4.0 unless otherwise specified.
 # 🌐 https://github.com/hikariatama/Hikka
 
-# + посхалко
-
 # You CAN edit this file without direct permission from the author.
 # You can redistribute this file with any modifications.
 
 # meta developer: @yg_modules
 # scope: hikka_only
 # scope: hikka_min 1.6.3
+
+# █▄█ █░█ █▀▄▀█ █▀▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄ █▀
+# ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
 
 from telethon import TelegramClient
 from yumlib import yummy
