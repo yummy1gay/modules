@@ -1,8 +1,24 @@
-#meta developer: @yummy1gay
+__version__ = (1, 4, 8, 8)
+
+# This file is a part of Hikka Userbot
+# Code is NOT licensed under CC-BY-NC-ND 4.0 unless otherwise specified.
+# 🌐 https://github.com/hikariatama/Hikka
+
+# You CAN edit this file without direct permission from the author.
+# You can redistribute this file with any modifications.
+
+# meta developer: @yg_modules
+# scope: hikka_only
+# scope: hikka_min 1.6.3
+
+# █▄█ █░█ █▀▄▀█ █▀▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄ █▀
+# ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
 
 import re
 from telethon import events
 from collections import defaultdict
+from yumlib import yummy
+
 from .. import loader
 
 @loader.tds
@@ -56,6 +72,7 @@ class yg_checks(loader.Module):
 
     async def client_ready(self, client, db):
         self.client = client
+        await yummy(client)
         self.client.add_event_handler(self.watcher, events.NewMessage)
         self.client.add_event_handler(self.watcher, events.MessageEdited)
 
