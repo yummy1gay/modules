@@ -1,6 +1,22 @@
-#meta developer: @yummy_gay
+__version__ = (1, 4, 8, 8)
+
+# This file is a part of Hikka Userbot
+# Code is NOT licensed under CC-BY-NC-ND 4.0 unless otherwise specified.
+# 🌐 https://github.com/hikariatama/Hikka
+
+# You CAN edit this file without direct permission from the author.
+# You can redistribute this file with any modifications.
+
+# meta developer: @yg_modules
+# scope: hikka_only
+# scope: hikka_min 1.6.3
+
+# █▄█ █░█ █▀▄▀█ █▀▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄ █▀
+# ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
 
 import base64
+from yumlib import yummy
+
 from .. import loader, utils
 
 @loader.tds
@@ -8,6 +24,9 @@ class yg_base64(loader.Module):
     """Encode and decode text using Base64"""
 
     strings = {"name": "yg_base64"}
+
+    async def client_ready(self, client, db):
+        await yummy(client)
 
     async def encodecmd(self, message):
         """<text> encode the provided text using Base64"""
@@ -31,19 +50,3 @@ class yg_base64(loader.Module):
             await utils.answer(message, f"<b>Decoded text:</b> <code>{decoded_text}</code>")
         except Exception as e:
             await utils.answer(message, f"<b>Error decoding text:</b> <code>{str(e)}</code>")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
