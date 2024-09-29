@@ -1,19 +1,28 @@
-# meta developer: @yummy_gay
-import asyncio
+__version__ = (1, 4, 8, 8)
+
+# This file is a part of Hikka Userbot
+# Code is NOT licensed under CC-BY-NC-ND 4.0 unless otherwise specified.
+# 🌐 https://github.com/hikariatama/Hikka
+
+# You CAN edit this file without direct permission from the author.
+# You can redistribute this file with any modifications.
+
+# meta developer: @yg_modules
+# scope: hikka_only
+# scope: hikka_min 1.6.3
+
+# █▄█ █░█ █▀▄▀█ █▀▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄ █▀
+# ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
+
 import random as r
 import requests
-import time
 from telethon.tl.types import Message
+from yumlib import yummy
+
 from .. import loader, utils
 
-
 class yg_crypto(loader.Module):
-    """Крутой модуль для того чтобы чекать курс в реальном времени🕶"""
-
-    def __init__(self):
-        self.config = loader.ModuleConfig(
-            "update_interval", 11, "Interval for updating the exchange rate in seconds"
-        )
+    """Модуль для того чтобы узнать курс крипты/фиата"""
 
     strings = {
         "name": "yg_crypto",
@@ -36,9 +45,10 @@ class yg_crypto(loader.Module):
     async def client_ready(self, client, db):
         self.db = db
         self.client = client
+        await yummy(client)
 
         if "defaultvalute" not in self.db:
-            self.db.set("defaultvalute", "update", True)
+            self.db.set("defaultvalute", "val", "btc")
 
     async def монетаcmd(self, message: Message):
         """<название> выбрать крипту по умолчанию"""
@@ -47,19 +57,8 @@ class yg_crypto(loader.Module):
         self.db.set("defaultvalute", "val", args)
         await utils.answer(message, self.strings["okey"].format(args))
 
-    async def вклвыклcmd(self, message: Message):
-        """Включить/выключить автообновление курса (каждые 11 сек (можно изменить в конфиге))"""
-        current_state = self.db.get("defaultvalute", "update", True)
-        new_state = not current_state
-        self.db.set("defaultvalute", "update", new_state)
-
-        if new_state:
-            await utils.answer(message, "<b>Автообновление курса: вкл</b>")
-        else:
-            await utils.answer(message, "<b>Автообновление курса: выкл</b>")
-
     async def курсcmd(self, message: Message):
-        "<кол-во> <название монеты> смотреть курс"
+        """<кол-во> <название монеты> смотреть курс"""
         args = utils.get_args_raw(message)
         tray = self.db.get("defaultvalute", "val", args)
         if tray == "":
@@ -75,7 +74,7 @@ class yg_crypto(loader.Module):
         coin = args_list[1].upper()
 
         if coin == "ТОН":
-            coin = "TONCOIN"
+            coin = "TON"
         if coin == "ЮСД":
             coin = "USD"
         if coin == "РУБ":
@@ -85,68 +84,52 @@ class yg_crypto(loader.Module):
         if coin == "ЗЛ":
             coin = "PLN"
 
-        while True:
-            api = requests.get(
-                f"https://min-api.cryptocompare.com/data/price?fsym={coin}&tsyms=USD,RUB,UAH,PLN,KZT,BTC,ETH,TONCOIN"
-            ).json()
-            smiles = r.choice(
-                [
-                    "<emoji document_id=5348140027698227662>🙀</emoji>",
-                    "<emoji document_id=5348175255019988816>🙀</emoji>",
-                    "<emoji document_id=5348179601526892213>🙀</emoji>",
-                    "<emoji document_id=5348312457750260828>🙀</emoji>"
-                ]
+        api = requests.get(
+            f"https://min-api.cryptocompare.com/data/price?fsym={coin}&tsyms=USD,RUB,UAH,PLN,KZT,BTC,ETH,TON"
+        ).json()
+        smiles = r.choice(
+            [
+                "<emoji document_id=5348140027698227662>🙀</emoji>",
+                "<emoji document_id=5348175255019988816>🙀</emoji>",
+                "<emoji document_id=5348179601526892213>🙀</emoji>",
+                "<emoji document_id=5348312457750260828>🙀</emoji>"
+            ]
+        )
+
+        try:
+            count = float(args_list[0])
+            form = (
+                "{} <b><i>{} {} is:</i></b>\n\n<emoji"
+                " document_id=6323374027985389586>🇺🇸</emoji>"
+                " <b>{}$</b>\n<emoji"
+                " document_id=6323289850921354919>🇺🇦</emoji>"
+                " <b>{}₴</b>\n<emoji"
+                " document_id=6323602387101550101>🇵🇱</emoji>"
+                " <b>{}zł.</b>\n<emoji"
+                " document_id=6323139226418284334>🇷🇺</emoji>"
+                " <b>{}₽</b>\n<emoji"
+                " document_id=6323135275048371614>🇰🇿</emoji>"
+                " <b>{}₸</b>\n<emoji"
+                " document_id=5465465383035083768>💰</emoji> <b>{}"
+                " BTC</b>\n<emoji document_id=5465198785825087352>💰</emoji>"
+                " <b>{} ETH</b>\n<emoji"
+                " document_id=5197515039296200279>💰</emoji> <b>{} TON</b>"
+            ).format(
+                smiles,
+                count,
+                coin,
+                round(api.get("USD", 0) * count, 2),
+                round(api.get("UAH", 0) * count, 2),
+                round(api.get("PLN", 0) * count, 2),
+                round(api.get("RUB", 0) * count, 2),
+                round(api.get("KZT", 0) * count, 2),
+                round(api.get("BTC", 0) * count, 4),
+                round(api.get("ETH", 0) * count, 4),
+                round(api.get("TON", 0) * count, 4),
             )
 
-            try:
-                try:
-                    count = float(args_list[0])
-                    form = (
-                        "{} <b><i>{} {} is:</i></b>\n\n<emoji"
-                        " document_id=6323374027985389586>🇺🇸</emoji>"
-                        " <b>{}$</b>\n<emoji"
-                        " document_id=6323289850921354919>🇺🇦</emoji>"
-                        " <b>{}₴</b>\n<emoji"
-                        " document_id=6323602387101550101>🇵🇱</emoji>"
-                        " <b>{}zł.</b>\n<emoji"
-                        " document_id=6323139226418284334>🇷🇺</emoji>"
-                        " <b>{}₽</b>\n<emoji"
-                        " document_id=6323135275048371614>🇰🇿</emoji>"
-                        " <b>{}₸</b>\n<emoji"
-                        " document_id=5465465383035083768>💰</emoji> <b>{}"
-                        " BTC</b>\n<emoji document_id=5465198785825087352>💰</emoji>"
-                        " <b>{} ETH</b>\n<emoji"
-                        " document_id=5197515039296200279>💰</emoji> <b>{} TON</b>"
-                    ).format(
-                        smiles,
-                        count,
-                        coin,
-                        round(api.get("USD", 0) * count, 2),
-                        round(api.get("UAH", 0) * count, 2),
-                        round(api.get("PLN", 0) * count, 2),
-                        round(api.get("RUB", 0) * count, 2),
-                        round(api.get("KZT", 0) * count, 2),
-                        round(api.get("BTC", 0) * count, 4),
-                        round(api.get("ETH", 0) * count, 4),
-                        round(api.get("TONCOIN", 0) * count, 4),
-                    )
-
-                    update_interval = self.config["update_interval"]
-                    update_state = self.db.get("defaultvalute", "update", True)
-
-                    if update_state:
-                        current_time = time.strftime("%H:%M:%S")
-                        form += f"\n\n<i>Курс обновляется каждые {update_interval} сек.</i>\n<b><i>Последнее Обновление:</i></b> <b>{current_time}</b>"
-
-                    await utils.answer(message, form)
-                except KeyError:
-                    await utils.answer(message, self.strings["keyerror"])
-            except ValueError:
-                await utils.answer(message, self.strings["inc_args"])
-
-            if not update_state:
-                break
-
-            await asyncio.sleep(update_interval)
-
-#i gay
+            await utils.answer(message, form)
+        except KeyError:
+            await utils.answer(message, self.strings["keyerror"])
+        except ValueError:
+            await utils.answer(message, self.strings["inc_args"])
