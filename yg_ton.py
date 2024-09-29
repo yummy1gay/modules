@@ -1,9 +1,24 @@
-#meta developer: @yummy1gay
+__version__ = (1, 4, 8, 8)
+
+# This file is a part of Hikka Userbot
+# Code is NOT licensed under CC-BY-NC-ND 4.0 unless otherwise specified.
+# 🌐 https://github.com/hikariatama/Hikka
+
+# You CAN edit this file without direct permission from the author.
+# You can redistribute this file with any modifications.
+
+# meta developer: @yg_modules
+# scope: hikka_only
+# scope: hikka_min 1.6.3
+
+# █▄█ █░█ █▀▄▀█ █▀▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄ █▀
+# ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
 
 import os
 import requests
-from .. import loader
 import matplotlib.pyplot as plt
+
+from .. import loader
 
 class TonGraphMod(loader.Module):
     """Модуль для графика курса TON"""
@@ -37,7 +52,7 @@ class TonGraphMod(loader.Module):
     def get_ton_price(self):
         try:
             response = requests.get("https://min-api.cryptocompare.com/data/price", params={
-                "fsym": "TONCOIN",
+                "fsym": "TON",
                 "tsyms": "USD"
             })
             data = response.json()
@@ -49,10 +64,10 @@ class TonGraphMod(loader.Module):
     
     def get_ton_data(self, ton_price):
         try:
-            response = requests.get("https://min-api.cryptocompare.com/data/v2/histohour", params={
-                "fsym": "TONCOIN",
+            response = requests.get("https://min-api.cryptocompare.com/data/v2/histoday", params={
+                "fsym": "TON",
                 "tsym": "USD",
-                "limit": 30,
+                "limit": 40,
                 "aggregate": 1
             })
             data = response.json()
