@@ -110,10 +110,10 @@ class yg_crypto(loader.Module):
                 " <b>{}₽</b>\n<emoji"
                 " document_id=6323135275048371614>🇰🇿</emoji>"
                 " <b>{}₸</b>\n<emoji"
-                " document_id=5465465383035083768>💰</emoji> <b>{}"
-                " BTC</b>\n<emoji document_id=5465198785825087352>💰</emoji>"
+                " document_id=5215590800003451651>🪙</emoji> <b>{}"
+                " BTC</b>\n<emoji document_id=5217867240044512715>🪙</emoji>"
                 " <b>{} ETH</b>\n<emoji"
-                " document_id=5197515039296200279>💰</emoji> <b>{} TON</b>"
+                " document_id=5215276644620586569>🪙</emoji> <b>{} TON</b>"
             ).format(
                 smiles,
                 count,
