@@ -1,14 +1,32 @@
-#meta developer: @yummy_gay
+__version__ = (1, 4, 8, 8)
+
+# This file is a part of Hikka Userbot
+# Code is NOT licensed under CC-BY-NC-ND 4.0 unless otherwise specified.
+# 🌐 https://github.com/hikariatama/Hikka
+
+# You CAN edit this file without direct permission from the author.
+# You can redistribute this file with any modifications.
+
+# meta developer: @yg_modules
+# scope: hikka_only
+# scope: hikka_min 1.6.3
+# scope: ffmpeg
+
+# █▄█ █░█ █▀▄▀█ █▀▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄ █▀
+# ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
 
 import os
-from .. import loader
-from PIL import Image
-from moviepy.editor import VideoFileClip
+from yumlib import yummy
 
-class circleMod(loader.Module):
+from .. import loader
+
+class yg_circle(loader.Module):
     """Модуль для конвертации видео в кружочек"""
 
     strings = {"name": "yg_circle"}
+
+    async def client_ready(self, client, db):
+        await yummy(client)
 
     async def krcmd(self, message):
         """<reply to video> конвертировать видео в кружочек"""
@@ -33,23 +51,10 @@ class circleMod(loader.Module):
         await message.delete()
 
     async def crop_to_square(self, video):
-        """Обрезать видео до квадратного формата (1:1)"""
-        square_video = None
-        video_clip = VideoFileClip(video)
-        width, height = video_clip.size
-        if width != height:
-            size = min(width, height)
-            left = (width - size) // 2
-            top = (height - size) // 2
-            right = left + size
-            bottom = top + size
-            cropped_clip = video_clip.crop(x1=left, y1=top, x2=right, y2=bottom)
-            square_video = f"{video}_square.mp4"
-            cropped_clip.write_videofile(square_video, codec="libx264", audio_codec="aac")
-        return square_video if square_video else video
-    
-    async def del_failed_kr_messages(self, message):
-        """Удалить все сообщения, содержащие текст '🚫 Call .kr failed!'"""
-        async for msg in message.client.iter_messages(message.to_id):
-            if msg.raw_text and '🚫 Call .kr failed!' in msg.raw_text:
-                await msg.delete()
+        """Обрезать видео до квадратного формата (1:1) с помощью ffmpeg"""
+        square_video = f"{video}_square.mp4"
+        command = (
+            f"ffmpeg -i {video} -vf \"crop='min(in_w,in_h)':'min(in_w,in_h)':'(in_w-out_w)/2':'(in_h-out_h)/2'\" -c:a copy {square_video}"
+        )
+        os.system(command)
+        return square_video if os.path.exists(square_video) else None
