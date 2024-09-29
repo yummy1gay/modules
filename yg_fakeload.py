@@ -1,6 +1,23 @@
-# meta developer: @yummy_gay, @Billi_cum
-from .. import loader, utils
+__version__ = (1, 4, 8, 8)
+
+# This file is a part of Hikka Userbot
+# Code is NOT licensed under CC-BY-NC-ND 4.0 unless otherwise specified.
+# 🌐 https://github.com/hikariatama/Hikka
+
+# You CAN edit this file without direct permission from the author.
+# You can redistribute this file with any modifications.
+
+# meta developer: @yg_modules
+# scope: hikka_only
+# scope: hikka_min 1.6.3
+
+# █▄█ █░█ █▀▄▀█ █▀▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄ █▀
+# ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
+
 import asyncio
+from yumlib import yummy
+
+from .. import loader, utils
 
 @loader.tds
 class YgFakeLoadModule(loader.Module):
@@ -8,6 +25,9 @@ class YgFakeLoadModule(loader.Module):
     strings = {
         "name": "yg_fakeload",
     }
+
+    async def client_ready(self, client, db):
+        await yummy(client)
 
     async def flacmd(self, message):
         """<text> имитировать процесс загрузки (prem emoji on)"""
