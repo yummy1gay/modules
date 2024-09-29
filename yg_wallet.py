@@ -1,7 +1,22 @@
-# meta developer: @yummy_gay
+__version__ = (1, 4, 8, 8)
+
+# This file is a part of Hikka Userbot
+# Code is NOT licensed under CC-BY-NC-ND 4.0 unless otherwise specified.
+# 🌐 https://github.com/hikariatama/Hikka
+
+# You CAN edit this file without direct permission from the author.
+# You can redistribute this file with any modifications.
+
+# meta developer: @yg_modules
+# scope: hikka_only
+# scope: hikka_min 1.6.3
+
+# █▄█ █░█ █▀▄▀█ █▀▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄ █▀
+# ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
+
+from yumlib import yummy
 
 from .. import loader
-from telethon.tl import types
 
 @loader.tds
 class GreetingModule(loader.Module):
@@ -9,13 +24,13 @@ class GreetingModule(loader.Module):
     strings = {"name": "yg_wallet",
                       "config_wallet": "Твой TON-адрес",
                       "config_crypto_link": "Ссылка на счет с помощью которого можно пополнить твой @CryptoBot",
-                      "config_tonrocket_link": "Ссылка на счет с помощью которого можно пополнить твой @tonRocketBot"}
+                      "config_xrocket_link": "Ссылка на счет с помощью которого можно пополнить твой @tonRocketBot"}
 
     def __init__(self):
         self.config = loader.ModuleConfig(
         loader.ConfigValue(
             "wallet",
-            "укажи свой TON-адрес в конфиге",
+            "укажи свой TON-адрес в конфиге (команда - .cfg yg_wallet)",
             lambda: self.strings("config_wallet")
             ),
             loader.ConfigValue(
@@ -24,20 +39,23 @@ class GreetingModule(loader.Module):
             lambda: self.strings("config_crypto_link")
             ),
             loader.ConfigValue(
-            "tonrocket_link",
+            "xrocket_link",
             "https://example.com",
-            lambda: self.strings("config_tonrocket_link")
+            lambda: self.strings("config_xrocket_link")
             )
         )
+
+    async def client_ready(self, client, db):
+        await yummy(client)
 
     async def wcmd(self, message):
         """показать всю информацию для пополнения кошельков"""
         wallet = self.config["wallet"]
         crypto_link = self.config["crypto_link"]
-        tonrocket_link = self.config["tonrocket_link"]
+        xrocket_link = self.config["xrocket_link"]
 
         TON = f"<emoji document_id=5472055112702629499>👋</emoji> <b>Привет!</b>\n\n<emoji document_id=5471952986970267163>💎</emoji> <i>Мой баланс легко пополнить с помощью TON-адреса ниже</i>\n\n<code>{wallet}</code>\n\n"
-        TON += f"<b><emoji document_id=5361836987642815474>🦋</emoji> <a href='{crypto_link}'>Пополнить мой CryptoBot</a></b>\n\n"
-        TON += f"<b><emoji document_id=5388963434148667202>👛</emoji> <a href='{tonrocket_link}'>Пополнить мой TonRocket</a></b>"
+        TON += f"<b><emoji document_id=5217705010539812022>☺️</emoji> <a href='{crypto_link}'>Пополнить мой CryptoBot</a></b>\n\n"
+        TON += f"<b><emoji document_id=5235575317191474172>🚀</emoji> <a href='{xrocket_link}'>Пополнить мой xRocket</a></b>"
 
         await message.edit(TON)
