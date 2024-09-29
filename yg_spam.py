@@ -1,22 +1,36 @@
-# meta developer: @yummy_gay
+__version__ = (1, 4, 8, 8)
+
+# This file is a part of Hikka Userbot
+# Code is NOT licensed under CC-BY-NC-ND 4.0 unless otherwise specified.
+# 🌐 https://github.com/hikariatama/Hikka
+
+# You CAN edit this file without direct permission from the author.
+# You can redistribute this file with any modifications.
+
+# meta developer: @yg_modules
+# scope: hikka_only
+# scope: hikka_min 1.6.3
+
+# █▄█ █░█ █▀▄▀█ █▀▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄ █▀
+# ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
 
 import asyncio
 from asyncio import gather, sleep
 from telethon.events import NewMessage
+from yumlib import yummy
 
 from .. import loader, utils
 
-
-def register(cb):
-    cb(yg_spamMod())
-
-
+@loader.tds
 class yg_spamMod(loader.Module):
     """Спам модуль"""
 
     strings = {"name": "yg_spam"}
     spamming = False
 
+    async def client_ready(self, client, db):
+        await yummy(client)
+    
     async def spamcmd(self, message):
         """<слово>"""
         if self.spamming:
