@@ -210,8 +210,9 @@ class yg_whales(loader.Module):
         balance = resp_json.get("balance", {}).get("amount")
         streak = resp_json.get("meta", {}).get("dailyLoginStreak")
         last_login = resp_json.get("meta", {}).get("lastFirstDailyLoginAt")
+        next_spin = resp_json.get("meta", {}).get("nextSpinAt")
 
-        return (token, whitelisted, nanoid, balance, streak, last_login)
+        return (token, whitelisted, nanoid, balance, streak, last_login, next_spin)
 
     async def claim_daily_bonus(self, token):
         headers = {
@@ -239,7 +240,7 @@ class yg_whales(loader.Module):
 
     async def clicker(self):
         if self.config["autotap"]:
-            token, whitelisted, nanoid, balance, streak, last_login = await self.login()
+            token, whitelisted, nanoid, balance, streak, last_login, next_spin = await self.login()
             if not token:
                 return
             click_count = balance + 1
@@ -261,7 +262,7 @@ class yg_whales(loader.Module):
     async def wheel(self) -> None:
         while self.config["running_on"]:
             try:
-                token, whitelisted, nanoid, balance, streak, last_login = await self.login()
+                token, whitelisted, nanoid, balance, streak, last_login, next_spin = await self.login()
 
                 if not whitelisted:
                     await self.log(f"<emoji document_id=5237697597971378782>😢</emoji> <b>You is not whitelisted.</b>")
@@ -281,10 +282,10 @@ class yg_whales(loader.Module):
             await asyncio.sleep(3600)
 
     async def bwhalescmd(self, message):
-        """show your balance, current streak, and time remaining until the next check-in in @WheelOfWhalesBot"""
+        """show your balance, current streak, next whalespin, and time remaining until the next check-in in @WheelOfWhalesBot"""
         await message.edit("<emoji document_id=5215484787325676090>🕐</emoji> <b>Fetching information...</b>")
 
-        token, whitelisted, nanoid, balance, streak, last_login = await self.login()
+        token, whitelisted, nanoid, balance, streak, last_login, next_spin = await self.login()
 
         if not whitelisted:
             await message.edit(f"<emoji document_id=5237697597971378782>😢</emoji> <b>You is not whitelisted.</b>")
@@ -302,6 +303,7 @@ class yg_whales(loader.Module):
         await message.edit(f"<emoji document_id=5395643160560948786>✈️</emoji> <b><a href='https://t.me/wheelofwhalesbot?start={nanoid}pub'>Wheel Of Whales 🐳</a></b>\n\n"
                             f"<emoji document_id=5237708627447396243>🤑</emoji> <b>Balance:</b> <code>{balance}</code>\n"
                             f"<emoji document_id=5235630748039394997>🥰</emoji> <b>Current Daily-Streak:</b> <code>{streak}</code>\n"
+                            f"<emoji document_id=5449742478427053613>🟡</emoji> <b>Next WhaleSpin at:</b> <code>{next_spin}</code>\n"
                             f"<emoji document_id=5460961680328509338>🏎</emoji> <b>Next check-in available in:</b> <code>{int(hours_remaining)}h {int(minutes_remaining)}m</code>")
 
     async def whalescmd(self, message):
