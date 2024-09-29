@@ -1,10 +1,24 @@
-#meta developer: @yummy_gay
-from telethon.tl.functions.messages import SendMessageRequest
+__version__ = (1, 4, 8, 8)
+
+# This file is a part of Hikka Userbot
+# Code is NOT licensed under CC-BY-NC-ND 4.0 unless otherwise specified.
+# 🌐 https://github.com/hikariatama/Hikka
+
+# You CAN edit this file without direct permission from the author.
+# You can redistribute this file with any modifications.
+
+# meta developer: @yg_modules
+# scope: hikka_only
+# scope: hikka_min 1.6.3
+
+# █▄█ █░█ █▀▄▀█ █▀▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄ █▀
+# ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
+
+from yumlib import yummy
+
 from .. import loader, utils
 
-def register(cb):
-    cb(SpamPonMod())
-
+@loader.tds
 class SpamPonMod(loader.Module):
     """Модуль для спама, в конфиге нужно все указать"""
 
@@ -16,6 +30,9 @@ class SpamPonMod(loader.Module):
             "count", "100", "Количество повторений слова для спама",
             "username", "username", "Идентификатор пользователя бота"
         )
+
+    async def client_ready(self, client, db):
+        await yummy(client)
 
     async def spmcmd(self, message):
         """запустить спам"""
