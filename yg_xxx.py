@@ -1,4 +1,20 @@
-#meta developer: @yummy1gay
+__version__ = (1, 4, 8, 8)
+
+# This file is a part of Hikka Userbot
+# Code is NOT licensed under CC-BY-NC-ND 4.0 unless otherwise specified.
+# 🌐 https://github.com/hikariatama/Hikka
+
+# You CAN edit this file without direct permission from the author.
+# You can redistribute this file with any modifications.
+
+# meta developer: @yg_modules
+# scope: hikka_only
+# scope: hikka_min 1.6.3
+
+# █▄█ █░█ █▀▄▀█ █▀▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄ █▀
+# ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
+
+from yumlib import yummy
 
 from .. import loader, utils
 
@@ -8,6 +24,9 @@ class yg_xxx(loader.Module):
 
     strings = {"name": "yg_xxx"}
 
+    async def client_ready(self, client, db):
+        await yummy(client)
+    
     def __init__(self):
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
