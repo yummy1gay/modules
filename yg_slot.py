@@ -1,16 +1,35 @@
-# meta developer: @yummy_gay
-# ститл даун
-from .. import loader
+__version__ = (1, 4, 8, 8)
+
+# This file is a part of Hikka Userbot
+# Code is NOT licensed under CC-BY-NC-ND 4.0 unless otherwise specified.
+# 🌐 https://github.com/hikariatama/Hikka
+
+# You CAN edit this file without direct permission from the author.
+# You can redistribute this file with any modifications.
+
+# meta developer: @yg_modules
+# scope: hikka_only
+# scope: hikka_min 1.6.3
+
+# █▄█ █░█ █▀▄▀█ █▀▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄ █▀
+# ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
+
+from yumlib import yummy
 from telethon.tl.types import InputMediaDice
 
+from .. import loader
+
 @loader.tds
-class DiceRollModule(loader.Module):
+class yg_slot(loader.Module):
     """Модуль для подкрутки игрового автомата (частое использование может вызвать FloodWait)"""
 
     strings = {
         "name": "yg_slot"
     }
 
+    async def client_ready(self, client, db):
+        await yummy(client)
+    
     @loader.sudo
     async def yg_stcmd(self, message):
         """подкрутить слот"""
