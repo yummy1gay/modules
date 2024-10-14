@@ -30,3 +30,4 @@ yg_wallet
 yg_whales
 yg_xxx
 yg_prem
+yg_giveshare
