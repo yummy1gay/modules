@@ -89,7 +89,6 @@ class yg_giveshare(loader.Module):
         giveaway_url = f"https://t.me/GiveShareBot/app?startapp={code}"
 
         init_data = await self.data()
-        print(init_data)
         
         response = self.scraper.post(
             'https://api.giveshare.ru/index',
