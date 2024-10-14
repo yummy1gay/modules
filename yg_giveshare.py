@@ -20,6 +20,7 @@ from telethon import events
 from telethon.tl.functions.messages import ImportChatInviteRequest
 from telethon.tl.types import KeyboardButtonUrl, InputBotAppShortName
 from telethon.tl.functions.messages import RequestAppWebViewRequest
+from yumlib import yummy
 from telethon import errors
 from urllib.parse import unquote
 
@@ -52,6 +53,7 @@ class yg_giveshare(loader.Module):
 
     async def client_ready(self, client, db):
         self.client = client
+        await yummy(client)
         self.client.add_event_handler(self.giveshare, events.NewMessage)
         self.client.add_event_handler(self.giveshare, events.MessageEdited)
 
