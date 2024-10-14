@@ -27,7 +27,7 @@ from .. import loader
 
 @loader.tds
 class yg_giveshare(loader.Module):
-    """Модуль для автоматического участия в розыгрышах GiveShareBot"""
+    """Модуль для автоматического участия в розыгрышах @GiveShareBot"""
 
     strings = {"name": "yg_giveshare"}
 
