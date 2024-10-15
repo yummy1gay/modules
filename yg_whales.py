@@ -210,38 +210,46 @@ class yg_whales(loader.Module):
         balance = resp_json.get("balance", {}).get("amount")
         streak = resp_json.get("meta", {}).get("dailyLoginStreak")
         last_login = resp_json.get("meta", {}).get("lastFirstDailyLoginAt")
-        next_spin = resp_json.get("meta", {}).get("nextSpinAt")
 
-        return (token, whitelisted, nanoid, balance, streak, last_login, next_spin)
+        return (token, whitelisted, nanoid, balance, streak, last_login)
 
     async def claim_daily_bonus(self, token):
+        url = "https://clicker-api.crashgame247.io/user/bonus/claim"
         headers = {
-            "accept": "application/json, text/plain, */*",
-            "authorization": f"Bearer {token}",
-            "User-Agent": self.user_agent
+            "Origin": "https://clicker.crashgame247.io",
+            "Referer": "https://clicker.crashgame247.io/",
+            "User-Agent": self.user_agent,
+            "Accept": "application/json, text/plain,*/*",
+            "Authorization": f"Bearer {token}"
         }
-        try:
-            response = await self.scraper.patch("https://clicker-api.crashgame247.io/user/bonus/claim", headers=headers)
-            response.raise_for_status()
+
+        response = await self.scraper.patch(url, headers=headers)
+        if response.status_code == 200:
             return True
-        except Exception as e:
-            await self.log(f"<emoji document_id=5237927129613614048>😡</emoji> <b>Error when claiming the daily bonus:</b> <code>{e}</code>")
-            return False
+        else:
+            try:
+                error_data = response.json()
+                await self.log(f"<emoji document_id=5237927129613614048>😡</emoji> <b>Error when claiming the daily bonus:</b> <code>{error_data}</code>")
+            except json.JSONDecodeError:
+                await self.log(f"<emoji document_id=5237927129613614048>😡</emoji> <b>Failed to decode error response:</b> <code>{response.text}</code>")
+            
+            if response.status_code == 500:
+                return False
 
     async def send_clicks(self, token, click_count):
         if self.config["autotap"]:
             headers = {
-                "accept": "application/json, text/plain, */*",
-                "accept-encoding": "gzip, deflate, br, zstd",
-                "accept-language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,pl;q=0.6",
-                "authorization": f"Bearer {token}",
-                "content-type": "application/json",
-                "origin": "https://clicker.crashgame247.io",
-                "referer": "https://clicker.crashgame247.io/",
-                "sec-fetch-dest": "empty",
-                "sec-fetch-mode": "cors",
-                "sec-fetch-site": "same-site",
-                "user-agent": self.user_agent
+                "Accept": "application/json, text/plain, */*",
+                "Accept-Encoding": "gzip, deflate, br, zstd",
+                "Accept-Language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,pl;q=0.6",
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/json",
+                "Origin": "https://clicker.crashgame247.io",
+                "Referer": "https://clicker.crashgame247.io/",
+                "Sec-Fetch-Dest": "empty",
+                "Sec-Fetch-Mode": "cors",
+                "Sec-Fetch-Site": "same-site",
+                "User-Agent": self.user_agent
             }
             clicks = {"clicks": click_count}
             
@@ -256,7 +264,7 @@ class yg_whales(loader.Module):
 
     async def clicker(self):
         if self.config["autotap"]:
-            token, whitelisted, nanoid, balance, streak, last_login, next_spin = await self.login()
+            token, whitelisted, nanoid, balance, streak, last_login = await self.login()
             if not token:
                 return
             
@@ -285,7 +293,7 @@ class yg_whales(loader.Module):
     async def wheel(self) -> None:
         while self.config["running_on"]:
             try:
-                token, whitelisted, nanoid, balance, streak, last_login, next_spin = await self.login()
+                token, whitelisted, nanoid, balance, streak, last_login = await self.login()
 
                 if not whitelisted:
                     await self.log(f"<emoji document_id=5237697597971378782>😢</emoji> <b>You is not whitelisted.</b>")
@@ -308,7 +316,7 @@ class yg_whales(loader.Module):
         """show your balance, current streak, next whalespin, and time remaining until the next check-in in @WheelOfWhalesBot"""
         await message.edit("<emoji document_id=5215484787325676090>🕐</emoji> <b>Fetching information...</b>")
 
-        token, whitelisted, nanoid, balance, streak, last_login, next_spin = await self.login()
+        token, whitelisted, nanoid, balance, streak, last_login = await self.login()
 
         if not whitelisted:
             await message.edit(f"<emoji document_id=5237697597971378782>😢</emoji> <b>You is not whitelisted.</b>")
@@ -326,7 +334,6 @@ class yg_whales(loader.Module):
         await message.edit(f"<emoji document_id=5395643160560948786>✈️</emoji> <b><a href='https://t.me/wheelofwhalesbot?start={nanoid}pub'>Wheel Of Whales 🐳</a></b>\n\n"
                             f"<emoji document_id=5237708627447396243>🤑</emoji> <b>Balance:</b> <code>{balance}</code>\n"
                             f"<emoji document_id=5235630748039394997>🥰</emoji> <b>Current Daily-Streak:</b> <code>{streak}</code>\n"
-                            f"<emoji document_id=5449742478427053613>🟡</emoji> <b>Next WhaleSpin at:</b> <code>{next_spin}</code>\n"
                             f"<emoji document_id=5460961680328509338>🏎</emoji> <b>Next check-in available in:</b> <code>{int(hours_remaining)}h {int(minutes_remaining)}m</code>")
 
     async def whalescmd(self, message):
