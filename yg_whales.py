@@ -232,27 +232,50 @@ class yg_whales(loader.Module):
         if self.config["autotap"]:
             headers = {
                 "accept": "application/json, text/plain, */*",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "accept-language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,pl;q=0.6",
                 "authorization": f"Bearer {token}",
                 "content-type": "application/json",
-                "User-Agent": self.user_agent
+                "origin": "https://clicker.crashgame247.io",
+                "referer": "https://clicker.crashgame247.io/",
+                "sec-fetch-dest": "empty",
+                "sec-fetch-mode": "cors",
+                "sec-fetch-site": "same-site",
+                "user-agent": self.user_agent
             }
-            await self.scraper.patch("https://clicker-api.crashgame247.io/meta/clicker", headers=headers, json={"clicks": click_count})
+            clicks = {"clicks": click_count}
+            
+            response = await self.scraper.put(
+                "https://clicker-api.crashgame247.io/meta/clicks", 
+                headers=headers, 
+                json=clicks
+            )
+            
+            if response.status != 200:
+                await self.log(f"<emoji document_id=5237927129613614048>😡</emoji> <b>Error:</b> <code>{response.status}</code>")
 
     async def clicker(self):
         if self.config["autotap"]:
             token, whitelisted, nanoid, balance, streak, last_login, next_spin = await self.login()
             if not token:
                 return
-            click_count = balance + 1
+            
+            total_clicks = 0
 
-            while True:
+            while total_clicks < 1000:
                 for _ in range(1000):
+                    click_count = random.randint(1, 5)
                     await self.send_clicks(token, click_count)
-                    click_count += 1
+                    total_clicks += click_count
+                    
                     await asyncio.sleep(random.uniform(1, 2))
 
+                    if total_clicks >= 1000:
+                        break
+
                 sleep_time = random.randint(1100, 2000)
-                await self.log(f"<emoji document_id=5454132901371203117>🏖</emoji> <code>+1000</code> <b>clicks, going to sleep for</b> <code>{sleep_time // 60}</code> <b>minutes.</b>")
+                await self.log(f"<emoji document_id=5454132901371203117>🏖</emoji> <code>{total_clicks}</code> <b>clicks sent, going to sleep for</b> <code>{sleep_time // 60}</code> <b>minutes.</b>")
+                
                 await asyncio.sleep(sleep_time)
 
     async def log(self, message):
