@@ -183,6 +183,9 @@ class yg_blum(loader.Module):
         else:
             self.scraper = CloudflareScraper(headers=headers, timeout=aiohttp.ClientTimeout(total=60))
 
+        me = await self.client.get_me()
+        self.user_id = me.id
+
         await yummy(client)
 
         asyncio.create_task(self.blum())
@@ -274,29 +277,25 @@ class yg_blum(loader.Module):
         
         return None
 
-    async def cpayload(self, g, p, d):
-        u_data = 'https://raw.githubusercontent.com/zuydd/database/main/blum.json'
-        r_data = requests.get(u_data)
-        j_data = r_data.json()
-        
-        ps = j_data.get('payloadServer', [])
-        f_data = [i for i in ps if i['status'] == 1]
-        
-        r_id = random.choice([i['id'] for i in f_data])
-        u = f'https://{r_id}.vercel.app/api/blum'
-        
-        pl = {
-            'game_id': g,
-            'points': p,
-            'dogs': d
+    async def cpayload(self, game, points, dogs):
+        data_url = f'https://ямме.рф/апи/блюм?айди={self.user_id}'
+        payload = {
+            'гаме_ид': game,
+            'поинтс': points,
+            'догс': dogs
         }
-        
-        async with self.scraper.post(u, json=pl) as r:
-            if r is not None:
-                r_data = await r.json()
-                payload = r_data.get("payload")
-                return payload
-        
+
+        async with aiohttp.ClientSession() as session:
+            try:
+                async with session.post(data_url, json=payload, timeout=10) as res:
+                    if res.status == 200:
+                        res_data = await res.json()
+                        return res_data.get("пайлоад")
+                    else:
+                        return None
+            except Exception as e:
+                await self.log(f"<b>Exception occurred:</b> <code>{e}</code>")
+
         return None
 
     async def play(self):
