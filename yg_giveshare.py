@@ -50,6 +50,7 @@ class yg_giveshare(loader.Module):
         self.client = None
         self.scraper = cloudscraper.create_scraper()
         self.processed_codes = set()
+        self.processed_ids = set()
 
     async def client_ready(self, client, db):
         self.client = client
@@ -106,6 +107,12 @@ class yg_giveshare(loader.Module):
         
         if 'raffle' in raffle_data:
             raffle = raffle_data['raffle']
+            
+            if raffle['id'] in self.processed_ids:
+                return
+            
+            self.processed_ids.add(raffle['id'])
+            
             log_info = (
                 f"<emoji document_id=5456140674028019486>⚡️</emoji> <b>Участвую в новом <a href='{giveaway_url}'>GiveShare розыгрыше</a>!</b>\n\n"
                 f"<emoji document_id=5467538555158943525>💭</emoji> <b>Название:</b> <code>{raffle['title']}</code>\n"
@@ -120,6 +127,16 @@ class yg_giveshare(loader.Module):
                 log_info += f'• <b><a href="{channel_link}">{channel_name}</a></b>\n'
                 await self.subscribe(channel_link)
             
+            self.scraper.post(
+                'https://api.giveshare.ru/member/create',
+                headers={'Content-Type': 'application/json'},
+                json={
+                    "initData": init_data,
+                    "param": f"{code}",
+                    "token": ""
+                }
+            )
+
             self.scraper.post(
                 'https://api.giveshare.ru/member/check',
                 headers={'Content-Type': 'application/json'},
