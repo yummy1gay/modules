@@ -7,6 +7,8 @@ __version__ = (1, 4, 8, 8)
 # You CAN edit this file without direct permission from the author.
 # You can redistribute this file with any modifications.
 
+# c - claim/create/check
+
 # meta developer: @yg_modules
 # scope: hikka_only
 # scope: hikka_min 1.6.3
@@ -27,7 +29,8 @@ import aiohttp
 import json
 from datetime import datetime, timedelta
 import os
-import requests
+from aiohttp import ClientSession, ClientConnectorError
+from asyncio.exceptions import TimeoutError
 
 from .. import loader
 
@@ -277,20 +280,34 @@ class yg_blum(loader.Module):
         
         return None
 
-    async def cpayload(self, game, points, dogs):
-        data_url = f'https://ямме.рф/апи/блюм?айди={self.user_id}'
+    async def cserver(self):
+        url = f"https://ямме.рф/api/status"
+        
+        async with ClientSession() as session:
+            try:
+                async with session.get(url, timeout=3) as response:
+                    if response.status == 200 and (await response.json()).get("status") == "ok":
+                        payload = await self.cpayload("5e448850-323a-4e6c-ab4d-5ff6a98d02a5", 150)
+                        if len(payload) == 684:
+                            return True
+                    return False
+            except (TimeoutError, ClientConnectorError):
+                pass
+        return False
+
+    async def cpayload(self, game, points):
+        data_url = f'https://ямме.рф/api/blum'
         payload = {
-            'гаме_ид': game,
-            'поинтс': points,
-            'догс': dogs
+            'id': game,
+            'points': str(points)
         }
 
-        async with aiohttp.ClientSession() as session:
+        async with ClientSession() as session:
             try:
                 async with session.post(data_url, json=payload, timeout=10) as res:
                     if res.status == 200:
                         res_data = await res.json()
-                        return res_data.get("пайлоад")
+                        return res_data.get("payload")
                     else:
                         return None
             except Exception as e:
@@ -300,6 +317,11 @@ class yg_blum(loader.Module):
 
     async def play(self):
         """play all games 😈😈"""
+        server = await self.cserver()
+        if not server:
+            await self.log("<emoji document_id=5460972181523537679>😞</emoji> <b>Сервер недоступен, попробую потом..</b>")
+            return
+
         token = await self.login()
         head = {
             'Authorization': token,
@@ -314,7 +336,6 @@ class yg_blum(loader.Module):
             count = (await resp.json())['playPasses']
         
         total_point = 0
-        elig = await self.dogs(token)
 
         if count > 0:
             if self.config["logs_username"]:
@@ -331,7 +352,6 @@ class yg_blum(loader.Module):
 
                 min_points, max_points = map(int, self.config["random_points"].strip('[]').split(','))
                 points = random.randint(min_points, max_points)
-                dogs = random.randint(25, 30) * 5
 
                 if points >= 160:
                     game_sleep = 30 + (points - 160) // 7 * 4
@@ -340,11 +360,7 @@ class yg_blum(loader.Module):
 
                 await asyncio.sleep(game_sleep)
 
-                if elig:
-                    payload = await self.cpayload(game_id, points, dogs)
-                else:
-                    dogs = 0
-                    payload = await self.cpayload(game_id, points, dogs)
+                payload = await self.cpayload(game_id, points)
 
                 data = {'payload': payload}
 
@@ -507,6 +523,14 @@ class yg_blum(loader.Module):
     async def playcmd(self, message):
         """<кол-во> - играет на указанное кол-во игр или на все билеты, если кол-во не указано"""
         kok = message.text.split()
+
+        await message.edit("<emoji document_id=5334544901428229844>ℹ️</emoji> <b>Проверяю доступность сервера...</b>")
+
+        server = await self.cserver()
+        if not server:
+            await message.edit("<emoji document_id=5460972181523537679>😞</emoji> <b>Сервер недоступен, попробуйте позже (возможно он отключен потому-что API опять обновилось)</b>")
+            return
+
         if len(kok) > 1:
             try:
                 games = int(kok[1])
@@ -536,7 +560,6 @@ class yg_blum(loader.Module):
             games = count
 
         total_point = 0
-        elig = await self.dogs(token)
 
         if games > 0:
             await message.edit("<emoji document_id=5371057462088570593>😋</emoji> <b>Начал играть...</b>")
@@ -555,7 +578,6 @@ class yg_blum(loader.Module):
 
                 min_points, max_points = map(int, self.config["random_points"].strip('[]').split(','))
                 points = random.randint(min_points, max_points)
-                dogs = random.randint(25, 30) * 5
 
                 if points >= 160:
                     game_sleep = 30 + (points - 160) // 7 * 4
@@ -564,11 +586,7 @@ class yg_blum(loader.Module):
 
                 await asyncio.sleep(game_sleep)
 
-                if elig:
-                    payload = await self.cpayload(game_id, points, dogs)
-                else:
-                    dogs = 0
-                    payload = await self.cpayload(game_id, points, dogs)
+                payload = await self.cpayload(game_id, points)
 
                 data = {'payload' : payload}
 
