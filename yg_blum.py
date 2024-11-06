@@ -287,7 +287,16 @@ class yg_blum(loader.Module):
             try:
                 async with session.get(url, timeout=3) as response:
                     if response.status == 200 and (await response.json()).get("status") == "ok":
-                        payload = await self.cpayload("5e448850-323a-4e6c-ab4d-5ff6a98d02a5", 150)
+                        test = "yyyy1488-uuuu-1488-mmmm-mmmm1488yyyy"
+                        points = {"BP": {"amount": 150 + 300 * 5}}
+                        assets = {
+                            "BOMB": {"clicks": 0},
+                            "CLOVER": {"clicks": 150},
+                            "FREEZE": {"clicks": 0},
+                            "HARRIS": {"clicks": 0},
+                            "TRUMP": {"clicks": 300}
+                        }
+                        payload = await self.cpayload(test, points, assets)
                         if len(payload) == 684:
                             return True
                     return False
@@ -295,16 +304,17 @@ class yg_blum(loader.Module):
                 pass
         return False
 
-    async def cpayload(self, game, points):
-        data_url = f'https://ямме.рф/api/blum'
+    async def cpayload(self, game, points, assets):
+        url = f'https://ямме.рф/api/blum'
         payload = {
             'id': game,
-            'points': str(points)
+            'points': points,
+            'assets': assets
         }
 
         async with ClientSession() as session:
             try:
-                async with session.post(data_url, json=payload, timeout=10) as res:
+                async with session.post(url, json=payload, timeout=10) as res:
                     if res.status == 200:
                         res_data = await res.json()
                         return res_data.get("payload")
@@ -351,16 +361,27 @@ class yg_blum(loader.Module):
                         return
 
                 min_points, max_points = map(int, self.config["random_points"].strip('[]').split(','))
-                points = random.randint(min_points, max_points)
 
-                if points >= 160:
-                    game_sleep = 30 + (points - 160) // 7 * 4
-                else:
-                    game_sleep = 30
+                sleep = random.uniform(30, 42)
 
-                await asyncio.sleep(game_sleep)
+                await asyncio.sleep(sleep)
 
-                payload = await self.cpayload(game_id, points)
+                freezes = int((sleep - 30) / 3)
+                clover = random.randint(min_points, max_points)
+                harris = random.randint(10, 20)
+                tramp = random.randint(10, 20)
+
+                amount = clover + harris * 5 + tramp * 5
+                points = {"BP": {"amount": amount}}
+                assets = {
+                    "BOMB": {"clicks": 0},
+                    "CLOVER": {"clicks": clover},
+                    "FREEZE": {"clicks": freezes},
+                    "HARRIS": {"clicks": harris},
+                    "TRUMP": {"clicks": tramp},
+                }
+
+                payload = await self.cpayload(game_id, points, assets)
 
                 data = {'payload': payload}
 
@@ -577,16 +598,27 @@ class yg_blum(loader.Module):
                         return
 
                 min_points, max_points = map(int, self.config["random_points"].strip('[]').split(','))
-                points = random.randint(min_points, max_points)
 
-                if points >= 160:
-                    game_sleep = 30 + (points - 160) // 7 * 4
-                else:
-                    game_sleep = 30
+                sleep = random.uniform(30, 42)
 
-                await asyncio.sleep(game_sleep)
+                await asyncio.sleep(sleep)
 
-                payload = await self.cpayload(game_id, points)
+                freezes = int((sleep - 30) / 3)
+                clover = random.randint(min_points, max_points)
+                harris = random.randint(10, 20)
+                tramp = random.randint(10, 20)
+
+                amount = clover + harris * 5 + tramp * 5
+                points = {"BP": {"amount": amount}}
+                assets = {
+                    "BOMB": {"clicks": 0},
+                    "CLOVER": {"clicks": clover},
+                    "FREEZE": {"clicks": freezes},
+                    "HARRIS": {"clicks": harris},
+                    "TRUMP": {"clicks": tramp},
+                }
+
+                payload = await self.cpayload(game_id, points, assets)
 
                 data = {'payload' : payload}
 
@@ -599,7 +631,7 @@ class yg_blum(loader.Module):
                 await message.edit(f'<emoji document_id=5852496924870971453>🐾</emoji> <b>{i + 1} / {games} игр</b>')
 
                 await asyncio.sleep(random.randint(1, 5))
-                total_point += points
+                total_point += amount
 
             await message.edit(
                 f"<emoji document_id=5350746136544037083>🤑</emoji> <b>Всего зафармлено $BLUM:</b> <code>{total_point}</code>"
