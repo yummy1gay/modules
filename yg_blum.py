@@ -393,7 +393,7 @@ class yg_blum(loader.Module):
 
                 await log.edit(f'<emoji document_id=5852496924870971453>🐾</emoji> <b>{i + 1} / {count} игр</b>')
                 await asyncio.sleep(random.randint(1, 5))
-                total_point += points
+                total_point += amount
 
             await log.edit(f"<emoji document_id=5350746136544037083>🤑</emoji> <b>Всего зафармлено $BLUM:</b> <code>{total_point}</code>")
         else:
