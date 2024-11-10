@@ -292,9 +292,7 @@ class yg_blum(loader.Module):
                         assets = {
                             "BOMB": {"clicks": 0},
                             "CLOVER": {"clicks": 150},
-                            "FREEZE": {"clicks": 0},
-                            "HARRIS": {"clicks": 0},
-                            "TRUMP": {"clicks": 300}
+                            "FREEZE": {"clicks": 0}
                         }
                         payload = await self.cpayload(test, points, assets)
                         if len(payload) == 684:
@@ -368,17 +366,13 @@ class yg_blum(loader.Module):
 
                 freezes = int((sleep - 30) / 3)
                 clover = random.randint(min_points, max_points)
-                harris = random.randint(10, 20)
-                tramp = random.randint(10, 20)
 
-                amount = clover + harris * 5 + tramp * 5
+                amount = clover
                 points = {"BP": {"amount": amount}}
                 assets = {
                     "BOMB": {"clicks": 0},
                     "CLOVER": {"clicks": clover},
-                    "FREEZE": {"clicks": freezes},
-                    "HARRIS": {"clicks": harris},
-                    "TRUMP": {"clicks": tramp},
+                    "FREEZE": {"clicks": freezes}
                 }
 
                 payload = await self.cpayload(game_id, points, assets)
@@ -605,17 +599,13 @@ class yg_blum(loader.Module):
 
                 freezes = int((sleep - 30) / 3)
                 clover = random.randint(min_points, max_points)
-                harris = random.randint(10, 20)
-                tramp = random.randint(10, 20)
 
-                amount = clover + harris * 5 + tramp * 5
+                amount = clover
                 points = {"BP": {"amount": amount}}
                 assets = {
                     "BOMB": {"clicks": 0},
                     "CLOVER": {"clicks": clover},
-                    "FREEZE": {"clicks": freezes},
-                    "HARRIS": {"clicks": harris},
-                    "TRUMP": {"clicks": tramp},
+                    "FREEZE": {"clicks": freezes}
                 }
 
                 payload = await self.cpayload(game_id, points, assets)
