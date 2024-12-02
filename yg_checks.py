@@ -186,9 +186,6 @@ class yg_checks(loader.Module):
 
     async def cb(self, message):
         if self.config["watcher_on"]:
-            if message.id in self.sent_codes:
-                return
-
             if message and message.sender_id not in [self.me_id, 1559501630]:
                 if not self.config["track_private"] and message.is_private:
                     return
@@ -206,8 +203,6 @@ class yg_checks(loader.Module):
                                 await self.client.send_message(1559501630, f"/start {code}")
                                 self.sent_codes[code] = True
                                 await self.send_log_message(message, code)
-
-            self.sent_codes[message.id] = True
 
     async def channels(self, event):
         if not self.config["subscribe"]:
