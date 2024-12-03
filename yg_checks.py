@@ -135,18 +135,13 @@ class yg_checks(loader.Module):
 
         return list(finded_codes)
 
-    async def password(self, pasw):
+    def password(self, pasw):
 
         def safeeval(expr):
             try:
                 return int(eval(compile(ast.parse(expr, mode="eval"), '', 'eval')))
             except Exception:
-                pass
-
-        if pasw in self.cache:
-            return None
-
-        self.cache.add(pasw)
+                raise ValueError("Invalid expression")
 
         try:
             return str(safeeval(pasw))
@@ -241,7 +236,7 @@ class yg_checks(loader.Module):
 
         if message.sender_id == 1559501630 and message.text.startswith('Введите пароль от чека для получения'):
             password = " ".join("\n".join(message.raw_text.split("\n")[2:]).split(" ")[1:])
-            r = await self.password(password)
+            r = self.password(password)
             if r !=None:
                 await self.client.send_message(1559501630, r)
 
