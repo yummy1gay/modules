@@ -161,7 +161,7 @@ class yg_checks(loader.Module):
             gifted_by = response_data.get("gifted_by")
             await self.log(f"<b>+{stars}</b> <emoji document_id=5897920748101571572>🌟</emoji> (от {gifted_by})")
         else:
-            await self.log(f"<emoji document_id=4947293727849710197>🤬</emoji> <b>Failed to participate in the giveaway. Response:</b> <code>{response.text}</code>")
+            pass
 
     async def get_codes(self, text, entities, markup):
         urls_in_message = set()
