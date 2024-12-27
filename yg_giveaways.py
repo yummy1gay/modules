@@ -1,4 +1,4 @@
-__version__ = (1, 4, 8, 8)
+__version__ = (1, 4, 8, 9)
 
 # This file is a part of Hikka Userbot
 # Code is NOT licensed under CC-BY-NC-ND 4.0 unless otherwise specified.
@@ -204,7 +204,7 @@ class yg_giveaways(loader.Module):
         urls_in_message = set()
         finded_codes = set()
 
-        url_pattern = r'https?://t\.me/(?:send|CryptoBot)/app\?startapp=[a-zA-Z0-9_-]+-([A-Za-z0-9]+)-'
+        url_pattern = r'https?://t\.me/(?:send|CryptoBot)/app\?startapp=[a-zA-Z0-9_-]+?-([A-Za-z0-9]+)(?:-|$)'
 
         if entities:
             for entity in entities:
