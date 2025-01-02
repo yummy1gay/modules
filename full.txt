@@ -31,3 +31,4 @@ yg_whales
 yg_xxx
 yg_prem
 yg_giveshare
+yg_trigger
