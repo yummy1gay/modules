@@ -24,7 +24,7 @@ import json
 import base64
 import random
 from urllib.parse import unquote
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import hashlib
 
 import aiohttp
@@ -229,6 +229,8 @@ class yg_blum(loader.Module):
         await yummy(client)
 
         asyncio.create_task(self.blum())
+        if self.config["auto_claim"]:
+            asyncio.create_task(self.claimer())
 
     async def web(self):
         try:
@@ -281,17 +283,47 @@ class yg_blum(loader.Module):
                 'User-Agent': self.user_agent
             }
 
-            response = self.scraper.post(
-                f"{self.game_url}/api/v1/daily-reward?offset=-180",
+            res = self.scraper.get(
+                "https://game-domain.blum.codes/api/v2/daily-reward",
                 headers=headers
             )
-            
-            response_text = response.text()
+            is_claim = res.json().get("claim")
+            if is_claim == "unavailable":
+                return False, res.json().get("canClaimAt")
 
-            return True if response_text == 'OK' else response_text
+            response = self.scraper.post(
+                "https://game-domain.blum.codes/api/v2/daily-reward",
+                headers=headers
+            )
+            data = response.json()
+
+            if data.get("claimed"):
+                return True, data.get("canClaimAt")
+            return False, data.get("canClaimAt")
 
         except Exception as e:
             await self.log(f"<emoji document_id=5240241223632954241>🚫</emoji> <b>Error occurred during claim daily reward:</b> <code>{e}</code>")
+
+    async def claimer(self):
+        while True:
+            token = await self.login()
+            success, can_claim_at = await self.claim(token)
+
+            if success:
+                await self.log("<emoji document_id=5307973935927663936>✅</emoji> <b>Ежедневная награда успешно получена!</b>")
+            else:
+                if can_claim_at:
+                    remaining_time = datetime.fromtimestamp(can_claim_at / 1000, tz=timezone.utc) - datetime.now(timezone.utc)
+                    hours_remaining = remaining_time.total_seconds() // 3600
+                    minutes_remaining = (remaining_time.total_seconds() % 3600) // 60
+                    await self.log(f"<emoji document_id=5213371882459378236>😬</emoji> <b>Не удалось получить ежедневную награду. Заберу через:</b> ~<code>{int(hours_remaining)}ч {int(minutes_remaining)}м</code>")
+
+            if can_claim_at:
+                sleep_time = (datetime.fromtimestamp(can_claim_at / 1000) - datetime.now()).total_seconds()
+                random_extra = random.randint(1800, 3600)
+                await asyncio.sleep(max(sleep_time + random_extra, 0))
+            else:
+                await asyncio.sleep(random.randint(1800, 3600))
 
     async def log(self, message):
         if self.config["logs_username"]:
@@ -652,16 +684,20 @@ class yg_blum(loader.Module):
         """показывает баланс из @blum"""
         await message.edit("<emoji document_id=5215484787325676090>🕐</emoji> <b>Получаю информацию...</b>")
 
-        last_run = self.get()
-        if last_run:
-            next_check_in = last_run + timedelta(hours=12)
-            remaining_time = next_check_in - datetime.now()
-            hours_remaining = remaining_time.total_seconds() // 3600
-            minutes_remaining = (remaining_time.total_seconds() % 3600) // 60
-        else:
-            hours_remaining, minutes_remaining = 0, 0
-        
         token = await self.login()
+
+        headers = {
+            'Authorization': token,
+            'Accept': 'application/json',
+            'User-Agent': self.user_agent
+        }
+        res = self.scraper.get(f"{self.game_url}/api/v2/daily-reward", headers=headers)
+        reward_info = res.json()
+
+        can_claim_at = datetime.fromtimestamp(reward_info.get("canClaimAt") / 1000, tz=timezone.utc)
+        remaining_time = can_claim_at - datetime.now(timezone.utc)
+        hours_remaining = remaining_time.total_seconds() // 3600
+        minutes_remaining = (remaining_time.total_seconds() % 3600) // 60
 
         timestamp, start_time, end_time, balance, play_passes = await self.balance(token)
 
@@ -669,7 +705,9 @@ class yg_blum(loader.Module):
             f"<emoji document_id=5375296873982604963>💰</emoji> <b>Баланс:</b>\n\n"
             f"<emoji document_id=5350746136544037083>🤑</emoji> <b>$BLUM:</b> <code>{balance}</code>\n"
             f"<emoji document_id=5377599075237502153>🎟</emoji> <b>Билеты:</b> <code>{play_passes}</code>\n"
-            f"<emoji document_id=5451732530048802485>⏳</emoji> <b>Следующий чек-ин будет доступен через:</b> <code>{int(hours_remaining)}ч {int(minutes_remaining)}м</code>"
+            f"<emoji document_id=5451732530048802485>⏳</emoji> <b>Следующий чек-ин доступен через:</b> <code>{int(hours_remaining)}ч {int(minutes_remaining)}м</code>\n"
+            f"<emoji document_id=5456140674028019486>⚡️</emoji> <b>Следующие награды:</b> <code>{reward_info['todayReward']['passes']} билетов, {reward_info['todayReward']['points']} очков</code>\n"
+            f"<emoji document_id=5424972470023104089>🔥</emoji> <b>Текущий стрик:</b> <code>{reward_info['currentStreakDays']} дней</code>"
         )
 
         await message.edit(balance_message)
@@ -764,13 +802,6 @@ class yg_blum(loader.Module):
                 try:
                     token = await self.login()
                     timestamp, start_time, end_time, balance, play_passes = await self.balance(token)
-
-                    if self.config["auto_claim"]:
-                        last_run = self.get()
-                        if not last_run or (datetime.now() - last_run) > timedelta(hours=12):
-                            attempt = await self.claim(token)
-                            if isinstance(attempt, bool) and attempt:
-                                await self.log(f"<emoji document_id=5307973935927663936>✅</emoji> <b>Успешно забрал ежедневную награду (наверное)</b>")
                     
                     if self.config["auto_play"]:
                         if play_passes > 0:
