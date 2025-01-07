@@ -110,6 +110,8 @@ class yg_trigger(loader.Module):
         
         for i, trigger in enumerate(self.triggers):
             conditions = "\n".join([f"<b>-</b> {k}: <code>{v}</code>" for k, v in trigger["conditions"].items()])
+            if not conditions:
+                conditions = "<b>Нет условий (all=true)</b>"
             reply_with_html += f"<b>{i}.</b> Условия:\n{conditions}\n\n<emoji document_id=5443038326535759644>💬</emoji> <b>Ответ:</b> <code>{trigger['response']}</code>\n\n"
             
             reply_plain_text += f"{i}.\nУсловия:\n{conditions}\nОтвет: {trigger['response']}\n\n"
@@ -157,12 +159,12 @@ class yg_trigger(loader.Module):
             valid_keys = {
                 "text", "user", "chat", "starts_with", "ends_with", "contains",
                 "regex", "is_command", "word_count", "char_count", "is_reply", "is_forwarded",
-                "media_type", "message_length", "time_range", "date", "weekday"
+                "media_type", "message_length", "time_range", "date", "weekday", "all"
             }
 
             conditions = {}
 
-            pattern = r'(\w+)=((?:"(?:[^"]|\\")*"|[^,\s]+))'
+            pattern = r'(\w+)=((?:\"(?:[^\"]|\\\")*\"|[^,\s]+))'
             matches = re.finditer(pattern, conditions_raw)
 
             for match in matches:
@@ -176,11 +178,26 @@ class yg_trigger(loader.Module):
                         raise ValueError(f"Значение для условия {key} должно быть в кавычках")
                     value = value[1:-1].replace('\\"', '"')
 
+                if key == "all" and value.lower() == "true":
+                    conditions = {"all": True}
+                    break
+
                 conditions[key] = value
+
+            if not conditions:
+                raise ValueError(
+                    "😨 Ты не указал никаких условий.. Если ты такой смелый, укажи all=true в условиях!"
+                )
+
+            if conditions.get("all"):
+                conditions = {}
 
             await self.add_trigger(conditions, response)
 
             conditions_str = "\n".join([f"<b>-</b> {k}: <code>{v}</code>" for k, v in conditions.items()])
+            if not conditions_str:
+                conditions_str = "<b>Нет условий (all=true)</b>"
+
             await utils.answer(
                 message,
                 f"<emoji document_id=5456140674028019486>⚡️</emoji> <b>Триггер добавлен!</b>\n\nУсловия:\n{conditions_str}\n\n<emoji document_id=5443038326535759644>💬</emoji> <b>Ответ:</b> <code>{response}</code>"
