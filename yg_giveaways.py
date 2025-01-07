@@ -1,4 +1,4 @@
-__version__ = (1, 4, 8, 9)
+__version__ = (1, 4, 9, 0)
 
 # This file is a part of Hikka Userbot
 # Code is NOT licensed under CC-BY-NC-ND 4.0 unless otherwise specified.
@@ -240,13 +240,16 @@ class yg_giveaways(loader.Module):
     async def gw(self, message):
         if self.config["watcher_on"]:
             if message and message.sender_id not in [self.me_id, 1559501630]:
-                codes = await self.get_codes(message.text, message.entities, message.reply_markup)
+                try:
+                    codes = await self.get_codes(message.text, message.entities, message.reply_markup)
 
-                if codes:
-                    for code in codes:
-                        if not self.codes[code]:
+                    if codes:
+                        for code in codes:
+                            if not self.codes[code]:
                                 await self.claim(f"https://app.crypt.bot/giveaways/{code}", "send")
                                 self.codes[code] = True
+                except AttributeError:
+                    pass
 
     async def giveawayscmd(self, message):
         """вкл/выкл активатор"""

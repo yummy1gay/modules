@@ -1,4 +1,4 @@
-__version__ = (1, 4, 8, 8)
+__version__ = (1, 4, 8, 9)
 
 # This file is a part of Hikka Userbot
 # Code is NOT licensed under CC-BY-NC-ND 4.0 unless otherwise specified.
@@ -254,28 +254,31 @@ class yg_checks(loader.Module):
     async def cb(self, message):
         if self.config["watcher_on"]:
             if message and message.sender_id not in [self.me_id, 1559501630]:
-                if not self.config["track_private"] and message.is_private:
-                    return
+                try:
+                    if not self.config["track_private"] and message.is_private:
+                        return
 
-                sender_username = getattr(message.sender, 'username', None) if message.sender else None
-                if sender_username in self.config["no_track_users"]:
-                    return
+                    sender_username = getattr(message.sender, 'username', None) if message.sender else None
+                    if sender_username in self.config["no_track_users"]:
+                        return
 
-                codes, stars_codes = await self.get_codes(message.text, message.entities, message.reply_markup)
+                    codes, stars_codes = await self.get_codes(message.text, message.entities, message.reply_markup)
 
-                if codes:
-                    for code in codes:
-                        if not self.sent_codes[code]:
-                            if code.startswith('CQ'):
-                                await self.client.send_message(1559501630, f"/start {code}")
-                                self.sent_codes[code] = True
-                                await self.send_log_message(message, code)
+                    if codes:
+                        for code in codes:
+                            if not self.sent_codes[code]:
+                                if code.startswith('CQ'):
+                                    await self.client.send_message(1559501630, f"/start {code}")
+                                    self.sent_codes[code] = True
+                                    await self.send_log_message(message, code)
 
-                if stars_codes:
-                    for stars_code in stars_codes:
-                        if not self.sent_codes[stars_code]:
-                            await self.stars(f"https://app.send.tg/stars/{stars_code}", "send")
-                            self.sent_codes[stars_code] = True
+                    if stars_codes:
+                        for stars_code in stars_codes:
+                            if not self.sent_codes[stars_code]:
+                                await self.stars(f"https://app.send.tg/stars/{stars_code}", "send")
+                                self.sent_codes[stars_code] = True
+                except AttributeError:
+                    pass
 
     async def channels(self, event):
         if not self.config["subscribe"]:
