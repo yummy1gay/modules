@@ -16,6 +16,7 @@ __version__ = (1, 4, 8, 8)
 
 import re
 import requests
+import os
 from yumlib import yummy
 
 from .. import loader
@@ -60,25 +61,29 @@ class yg_capctha(loader.Module):
                         'OCREngine': 2
                     }
 
-                    with open(file, 'rb') as f:
-                        response = requests.post(
-                            'https://api.ocr.space/parse/image',
-                            data=payload,
-                            files={'filename': ('image.png', f, 'image/png')}
-                        )
+                    try:
+                        with open(file, 'rb') as f:
+                            response = requests.post(
+                                'https://api.ocr.space/parse/image',
+                                data=payload,
+                                files={'filename': ('image.png', f, 'image/png')}
+                            )
 
-                    if response.status_code == 200:
-                        result = response.json()
-                        if 'ParsedResults' in result and result['ParsedResults']:
-                            ocr_text = result['ParsedResults'][0].get('ParsedText', '').replace(" ", "")
-                            await message.reply(ocr_text)
+                        if response.status_code == 200:
+                            result = response.json()
+                            if 'ParsedResults' in result and result['ParsedResults']:
+                                ocr_text = result['ParsedResults'][0].get('ParsedText', '').replace(" ", "")
+                                await message.reply(ocr_text)
+                            else:
+                                sorry = await message.reply("/cancel")
+                                await sorry.edit("/cancel\n\n<emoji document_id=5456337168781810982>😔</emoji> <b>Не удалось решить капчу</b>")
+                                
                         else:
                             sorry = await message.reply("/cancel")
                             await sorry.edit("/cancel\n\n<emoji document_id=5456337168781810982>😔</emoji> <b>Не удалось решить капчу</b>")
-                            
-                    else:
-                        sorry = await message.reply("/cancel")
-                        await sorry.edit("/cancel\n\n<emoji document_id=5456337168781810982>😔</emoji> <b>Не удалось решить капчу</b>")
+                    finally:
+                        if os.path.exists(file):
+                            os.remove(file)
 
     async def captchacmd(self, message):
         """вкл/выкл решалку капчи"""
