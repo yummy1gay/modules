@@ -18,6 +18,7 @@ from telethon import TelegramClient
 from yumlib import yummy
 from deep_translator import GoogleTranslator
 import requests
+import os
 
 from .. import loader, utils
 
@@ -80,6 +81,9 @@ class yg_ocr(loader.Module):
             print(f"Request Error: {e}")
             await utils.answer(m, self.strings["c"])
             return None
+        finally:
+            if os.path.exists(f):
+                os.remove(f)
 
         l = s.json()
         if 'ParsedResults' in l and l['ParsedResults']:
