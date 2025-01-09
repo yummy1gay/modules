@@ -49,6 +49,12 @@ class yg_gemini(loader.Module):
                 "Инструкция для Gemini AI. Пример: Общайся как псих",
                 validator=loader.validators.String(),
             ),
+            loader.ConfigValue(
+                "proxy",
+                "",
+                "Прокси в формате http://<user>:<pass>@<proxy>:<port>, или http://<proxy>:<port>",
+                validator=loader.validators.String(),
+            ),
         )
 
     async def client_ready(self, client, db):
@@ -60,6 +66,14 @@ class yg_gemini(loader.Module):
             {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
             {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
         ]
+
+        proxy = self.config["proxy"]
+
+        if proxy:
+            os.environ["http_proxy"] = proxy
+            os.environ["HTTP_PROXY"] = proxy
+            os.environ["https_proxy"] = proxy
+            os.environ["HTTPS_PROXY"] = proxy
 
     async def geminicmd(self, message):
         """<reply to photo / text> — отправить запрос к Gemini"""
