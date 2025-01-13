@@ -15,6 +15,8 @@ __version__ = (1, 4, 8, 8)
 # scope: hikka_only
 # scope: hikka_min 1.6.3
 
+# requires: cryptography>=44.0.0 pyOpenSSL>=25.0.0
+
 # █▄█ █░█ █▀▄▀█ █▀▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄ █▀
 # ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
 
