@@ -17,7 +17,6 @@ __version__ = (1, 4, 8, 8)
 
 import os
 import uuid
-from yumlib import yummy
 
 from .. import loader, utils
 
@@ -26,9 +25,6 @@ class VoiceModule(loader.Module):
     """Converts music and video (required ffmpeg)"""
 
     strings = {"name": "yg_vm"}
-
-    async def client_ready(self, client, db):
-        await yummy(client)
     
     async def m2vcmd(self, message):
         """Convert music to voice message"""

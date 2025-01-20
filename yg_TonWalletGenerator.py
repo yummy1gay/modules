@@ -16,7 +16,6 @@ __version__ = (1, 4, 8, 8)
 
 import logging
 from tonsdk.contract.wallet import Wallets, WalletVersionEnum
-from yumlib import yummy
 
 from .. import loader, utils
 
@@ -28,7 +27,6 @@ class TonWalletGenerator(loader.Module):
 
     async def client_ready(self, client, db):
         self.client = client
-        await yummy(client)
 
     async def gencmd(self, message):
         """<count> генерирует один или несколько TON кошельков"""

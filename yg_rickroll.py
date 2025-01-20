@@ -17,7 +17,6 @@ __version__ = (1, 4, 8, 8)
 import re
 from pytube import YouTube
 from telethon.tl.types import MessageEntityTextUrl
-from yumlib import yummy
 
 from .. import loader, utils
 
@@ -47,9 +46,6 @@ class yg_rickroll(loader.Module):
         "link_arg": "<emoji document_id=5447644880824181073>⚠️</emoji> <b>Вам нужно ответить на сообщение с ссылкой на YouTube ролик</b>",
         "not_found": "<emoji document_id=5240241223632954241>🚫</emoji> <b>Не найдено ссылки на YouTube ролик</b>"
     }
-
-    async def client_ready(self, client, db):
-        await yummy(client)
     
     async def rickcmd(self, message):
         """<reply> - проверить есть ли ссылка на рикролл в сообщении"""

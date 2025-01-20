@@ -17,7 +17,6 @@ __version__ = (1, 4, 8, 8)
 import asyncio
 from asyncio import gather, sleep
 from telethon.events import NewMessage
-from yumlib import yummy
 
 from .. import loader, utils
 
@@ -27,9 +26,6 @@ class yg_spamMod(loader.Module):
 
     strings = {"name": "yg_spam"}
     spamming = False
-
-    async def client_ready(self, client, db):
-        await yummy(client)
     
     async def spamcmd(self, message):
         """<слово>"""

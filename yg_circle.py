@@ -16,7 +16,6 @@ __version__ = (1, 4, 8, 8)
 # ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
 
 import os
-from yumlib import yummy
 
 from .. import loader
 
@@ -24,9 +23,6 @@ class yg_circle(loader.Module):
     """Модуль для конвертации видео в кружочек"""
 
     strings = {"name": "yg_circle"}
-
-    async def client_ready(self, client, db):
-        await yummy(client)
 
     async def krcmd(self, message):
         """<reply to video> конвертировать видео в кружочек"""

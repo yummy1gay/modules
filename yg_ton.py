@@ -17,7 +17,6 @@ __version__ = (1, 4, 8, 8)
 import os
 import requests
 import matplotlib.pyplot as plt
-from yumlib import yummy
 
 from .. import loader
 
@@ -25,9 +24,6 @@ class TonGraphMod(loader.Module):
     """Модуль для графика курса TON"""
 
     strings = {"name": "yg_ton"}
-
-    async def client_ready(self, client, db):
-        await yummy(client)
 
     async def toncmd(self, message):
         """Отправить график курса TON/USD"""

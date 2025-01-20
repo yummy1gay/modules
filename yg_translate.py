@@ -16,7 +16,6 @@ __version__ = (1, 4, 8, 8)
 
 from deep_translator import GoogleTranslator
 from langdetect import detect
-from yumlib import yummy
 
 from .. import loader, utils
 
@@ -25,9 +24,6 @@ class переводMod(loader.Module):
     """Модуль для перевода текста на различные языки"""
 
     strings = {"name": "yg_translate"}
-
-    async def client_ready(self, client, db):
-        await yummy(client)
     
     @loader.command("перевод", aliases=["tr"])
     async def пcmd(self, message):

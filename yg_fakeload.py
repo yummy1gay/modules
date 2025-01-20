@@ -15,7 +15,6 @@ __version__ = (1, 4, 8, 8)
 # ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
 
 import asyncio
-from yumlib import yummy
 
 from .. import loader, utils
 
@@ -25,9 +24,6 @@ class YgFakeLoadModule(loader.Module):
     strings = {
         "name": "yg_fakeload",
     }
-
-    async def client_ready(self, client, db):
-        await yummy(client)
 
     async def flacmd(self, message):
         """<text> имитировать процесс загрузки (prem emoji on)"""

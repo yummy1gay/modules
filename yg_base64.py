@@ -15,7 +15,6 @@ __version__ = (1, 4, 8, 8)
 # ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
 
 import base64
-from yumlib import yummy
 
 from .. import loader, utils
 
@@ -24,9 +23,6 @@ class yg_base64(loader.Module):
     """Encode and decode text using Base64"""
 
     strings = {"name": "yg_base64"}
-
-    async def client_ready(self, client, db):
-        await yummy(client)
 
     async def encodecmd(self, message):
         """<text> encode the provided text using Base64"""

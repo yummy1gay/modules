@@ -28,7 +28,6 @@ from telethon.tl.types import (
     MessageActionChannelMigrateFrom,
     UserStatusOnline,
 )
-from yumlib import yummy
 
 from .. import loader, utils
 
@@ -37,9 +36,6 @@ class ChatInfoMod(loader.Module):
     """Посмотреть информацию о чате."""
 
     strings = {"name": "yg_chatinfo"}
-
-    async def client_ready(self, client, db):
-        await yummy(client)
 
     async def chatinfocmd(self, chatinfo):
         """<юзернейм чата> или <айди чата> или просто команда в том чате где ты находишься"""

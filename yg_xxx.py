@@ -14,8 +14,6 @@ __version__ = (1, 4, 8, 8)
 # █▄█ █░█ █▀▄▀█ █▀▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄ █▀
 # ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
 
-from yumlib import yummy
-
 from .. import loader, utils
 
 @loader.tds
@@ -23,9 +21,6 @@ class yg_xxx(loader.Module):
     """Модуль для копирования сообщений и отправки их по указанному юзернейму (создавался для того, чтобы пиздить сообщения из каналов или чатов, где это запрещено). (@username можно указать в конфиге, и не указывать его каждый раз при вводе команды)"""
 
     strings = {"name": "yg_xxx"}
-
-    async def client_ready(self, client, db):
-        await yummy(client)
     
     def __init__(self):
         self.config = loader.ModuleConfig(

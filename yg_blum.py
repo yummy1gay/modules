@@ -33,7 +33,6 @@ import aiohttp
 from aiohttp_proxy import ProxyConnector
 import asyncio
 import cloudscraper
-from yumlib import yummy
 
 from telethon import TelegramClient
 from telethon.tl.functions.messages import RequestAppWebViewRequest
@@ -227,8 +226,6 @@ class yg_blum(loader.Module):
 
         me = await self.client.get_me()
         self.user_id = me.id
-
-        await yummy(client)
 
         asyncio.create_task(self.blum())
         if self.config["auto_claim"]:

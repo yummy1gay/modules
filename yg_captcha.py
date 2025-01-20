@@ -17,7 +17,6 @@ __version__ = (1, 4, 8, 8)
 import re
 import requests
 import os
-from yumlib import yummy
 
 from .. import loader
 
@@ -45,7 +44,6 @@ class yg_capctha(loader.Module):
 
     async def client_ready(self, client, db):
         self.client = client
-        await yummy(client)
 
     async def watcher(self, message):
         if self.config["captcha_on"]:

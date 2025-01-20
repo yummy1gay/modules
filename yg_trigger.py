@@ -16,7 +16,6 @@ __version__ = (1, 0, 0, 1)
 
 import re
 from .. import loader, utils
-from yumlib import yummy
 from telethon import events
 import os
 
@@ -40,7 +39,6 @@ class yg_trigger(loader.Module):
         self.db = db
         self.triggers = self.db.get("triggers", "list", [])
         self.client = client
-        await yummy(client)
         handlers = [
             (self.trigger, [events.NewMessage, events.MessageEdited])
         ]

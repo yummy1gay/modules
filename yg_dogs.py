@@ -25,7 +25,6 @@ import random
 import json
 import os
 from datetime import datetime, timedelta
-from yumlib import yummy
 
 from .. import loader
 
@@ -58,7 +57,6 @@ class yg_dogs(loader.Module):
         me = await self.client.get_me()
         self.user_id = me.id
         self.file = "dogs.json"
-        await yummy(client)
 
         asyncio.create_task(self.dogs())
 

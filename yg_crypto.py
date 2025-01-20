@@ -17,7 +17,6 @@ __version__ = (1, 4, 8, 8)
 import random as r
 import requests
 from telethon.tl.types import Message
-from yumlib import yummy
 
 from .. import loader, utils
 
@@ -45,7 +44,6 @@ class yg_crypto(loader.Module):
     async def client_ready(self, client, db):
         self.db = db
         self.client = client
-        await yummy(client)
 
         if "defaultvalute" not in self.db:
             self.db.set("defaultvalute", "val", "btc")

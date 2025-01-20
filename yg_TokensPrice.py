@@ -17,7 +17,6 @@ __version__ = (1, 4, 8, 8)
 import re
 import httpx
 import asyncio
-from yumlib import yummy
 
 from .. import loader
 
@@ -26,9 +25,6 @@ class FCKPricesMod(loader.Module):
     """Модуль для того чтобы узнавать информацию об цене токенов которые числятся в базе данных FCK Analytics"""
 
     strings = {"name": "yg_TokensPrice"}
-
-    async def client_ready(self, client, db):
-        await yummy(client)
 
     async def pricecmd(self, message):
         """<name> получить информацию о токене"""

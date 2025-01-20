@@ -15,7 +15,6 @@ __version__ = (1, 4, 8, 8)
 # ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
 
 from telethon import TelegramClient
-from yumlib import yummy
 
 from .. import loader, utils
 
@@ -39,10 +38,6 @@ class yg_balance(loader.Module):
         "NOT": "<emoji document_id=5215699170618263097>🪙</emoji>",
         "DOGS": "<emoji document_id=5341347975006280049>🪙</emoji>"
     }
-
-    async def client_ready(self, client: TelegramClient, db):
-        self.client = client
-        await yummy(client)
 
     @staticmethod
     async def check(bot, message):

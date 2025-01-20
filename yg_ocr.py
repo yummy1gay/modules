@@ -15,7 +15,6 @@ __version__ = (1, 4, 8, 8)
 # ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
 
 from telethon import TelegramClient
-from yumlib import yummy
 from deep_translator import GoogleTranslator
 import requests
 import os
@@ -49,7 +48,6 @@ class yg_ocr(loader.Module):
 
     async def client_ready(self, client: TelegramClient, db):
         self.client = client
-        await yummy(client)
 
     async def p(self, m):
         """распознать текст на изображении с помощью OCR"""

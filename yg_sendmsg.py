@@ -14,7 +14,6 @@ __version__ = (1, 4, 8, 8)
 # █▄█ █░█ █▀▄▀█ █▀▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄ █▀
 # ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
 
-from yumlib import yummy
 
 from .. import loader, utils
 
@@ -23,9 +22,6 @@ class yg_sendmsg(loader.Module):
     """Модуль для отправки сообщений на указанный юзернейм"""
 
     strings = {"name": "yg_sendmsg"}
-
-    async def client_ready(self, client, db):
-        await yummy(client)
     
     async def sendmsgcmd(self, message):
         """<username> <word> oтправляет сообщение на указанный юзернейм"""

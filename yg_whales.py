@@ -21,7 +21,6 @@ from telethon.tl.functions.channels import JoinChannelRequest
 import aiohttp
 from aiohttp_proxy import ProxyConnector
 from aiocfscrape import CloudflareScraper
-from yumlib import yummy
 import random
 import json
 import os
@@ -150,7 +149,6 @@ class yg_whales(loader.Module):
             self.scraper = CloudflareScraper(timeout=aiohttp.ClientTimeout(total=60))
         
         me = await self.client.get_me()
-        await yummy(client)
         self.user_id = me.id
         self.user_agent = self.load_user_agent()
 

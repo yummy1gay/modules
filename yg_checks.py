@@ -17,7 +17,6 @@ __version__ = (1, 4, 8, 9)
 import re
 from telethon import events
 from collections import defaultdict
-from yumlib import yummy
 from telethon.tl.types import MessageEntityUrl, MessageEntityTextUrl, MessageMediaWebPage
 from telethon.tl.functions.messages import ImportChatInviteRequest, CheckChatInviteRequest
 from telethon.tl.functions.channels import LeaveChannelRequest
@@ -88,7 +87,6 @@ class yg_checks(loader.Module):
 
     async def client_ready(self, client, db):
         self.client = client
-        await yummy(client)
         self.me = await self.client.get_me()
         self.me_id = self.me.id
         self.extractor = URLExtract()

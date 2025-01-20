@@ -1,0 +1,157 @@
+[
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/SwitchToTelethon.py",
+        "name": "SwitchToTelethon",
+        "description": "Auto switch from Hikka-TL to Telethon"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_trigger.py",
+        "name": "yg_trigger",
+        "description": "Триггер-модуль. Документация: ямме.рф/триггер"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_gemini.py",
+        "name": "yg_gemini",
+        "description": "Модуль для общения с Gemini AI"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_circle.py",
+        "name": "yg_circle",
+        "description": "Модуль для конвертации видео в кружочек"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_vm.py",
+        "name": "yg_vm",
+        "description": "Converts music and video (required ffmpeg)"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_ocr.py",
+        "name": "yg_ocr",
+        "description": "Модуль для распознавания текста на изображении и перевода"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_prem.py",
+        "name": "yg_prem",
+        "description": "Модуль для автоматического участия в розыгрышах премиум-подписок"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_checks.py",
+        "name": "yg_checks",
+        "description": "Активатор чеков @send (@CryptoBot)"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_captcha.py",
+        "name": "yg_captcha",
+        "description": "Решает капчу криптобота (если вы не прем юзер)"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_balance.py",
+        "name": "yg_balance",
+        "description": "Модуль для просмотра балансов в @CryptoBot и @wallet"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_giveaways.py",
+        "name": "yg_giveaways",
+        "description": "Модуль для автоматического участия в розыгрышах @CryptoBot"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_giveshare.py",
+        "name": "yg_giveshare",
+        "description": "Модуль для автоматического участия в розыгрышах @GiveShareBot"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_blum.py",
+        "name": "yg_blum",
+        "description": "Играет в игры @blum, автоматически забирает ежедневные награды и токены с рефки, а также автофарминг токенов"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_ton.py",
+        "name": "yg_ton",
+        "description": "Модуль для графика курса TON"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_TonWalletGenerator.py",
+        "name": "yg_TonWalletGenerator",
+        "description": "Генератор TON кошельков"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_base64.py",
+        "name": "yg_base64",
+        "description": "Encode and decode text using Base64"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_chatid.py",
+        "name": "yg_chatid",
+        "description": "Модуль для отображения ID чатов, каналов или пользователей"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_chatinfo.py",
+        "name": "yg_chatinfo",
+        "description": "Посмотреть информацию о чате."
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_CopyUser_fix.py",
+        "name": "CopyUser",
+        "description": "Полное копирование юзера (ава, имя|фамилия, био, эмодзи статус)"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_crypto.py",
+        "name": "yg_crypto",
+        "description": "Модуль для того чтобы узнать курс крипты/фиата"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_dice.py",
+        "name": "yg_dice",
+        "description": "Модуль для подкрутки эмодзи игр"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_fakeload.py",
+        "name": "yg_fakeload",
+        "description": "Модуль для имитации загрузки"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_notes.py",
+        "name": "yg_notes",
+        "description": "Модуль заметок (для каждого чата отдельный список)"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_rickroll.py",
+        "name": "yg_rickroll",
+        "description": "Модуль чтобы проверить есть ли ссылка на рикролл в сообщении"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_sendmsg.py",
+        "name": "yg_sendmsg",
+        "description": "Модуль для отправки сообщений на указанный юзернейм"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_slot.py",
+        "name": "yg_slot",
+        "description": "Модуль для подкрутки игрового автомата (частое использование может вызвать FloodWait)"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_spam.py",
+        "name": "yg_spam",
+        "description": "Спам модуль"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_timer.py",
+        "name": "yg_timer",
+        "description": "Модуль для установки и управления таймерами."
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_wallet.py",
+        "name": "yg_wallet",
+        "description": "Модуль для отправки сообщения о том как можно пополнить твой кошелек (все настраивается в конфиге)"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_whales.py",
+        "name": "yg_whales",
+        "description": "AutoTapper and receives daily check-ins in @WheelOfWhalesBot with proxy support!"
+    },
+    {
+        "install": ".dlm https://raw.githubusercontent.com/yummy1gay/modules/main/yg_xxx.py",
+        "name": "yg_xxx",
+        "description": "Модуль для копирования сообщений и отправки их по указанному юзернейму (создавался для того, чтобы пиздить сообщения из каналов или чатов, где это запрещено). (@username можно указать в конфиге, и не указывать его каждый раз при вводе команды)"
+    }
+]

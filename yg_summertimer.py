@@ -20,7 +20,6 @@ import pytz
 from telethon.tl.types import Message
 from telethon.tl import types
 from telethon import events
-from yumlib import yummy
 
 from .. import loader
 
@@ -38,9 +37,6 @@ class SummerModule(loader.Module):
 
     def config_complete(self):
         self.name = self.strings["name"]
-
-    async def client_ready(self, client, db):
-        await yummy(client)
     
     async def summercmd(self, message: Message):
         """отправить обратный отсчет до лета"""

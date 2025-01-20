@@ -16,7 +16,6 @@ __version__ = (1, 4, 8, 8)
 
 import os
 from asyncio import sleep
-from yumlib import yummy
 
 from telethon import functions, types
 from telethon.tl.functions.account import UpdateProfileRequest, UpdateEmojiStatusRequest
@@ -29,9 +28,6 @@ class CuMod(loader.Module):
     """Полное копирование юзера (ава, имя|фамилия, био, эмодзи статус)"""
 
     strings = {"name": "CopyUser"}
-
-    async def client_ready(self, client, db):
-        await yummy(client)
     
     @loader.owner
     async def cucmd(self, message):

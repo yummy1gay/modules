@@ -17,7 +17,6 @@ __version__ = (1, 4, 8, 8)
 import asyncio
 import time
 from telethon.tl.types import Message
-from yumlib import yummy
 
 from .. import loader, utils
 
@@ -34,7 +33,7 @@ class yg_timer(loader.Module):
         self.timer_counter = 0
 
     async def client_ready(self, client, db):
-        await yummy(client)
+        self.client = client
     
     async def start_timer(self, message, timer_id, duration, initial_time_text):
         start_time = time.time()
@@ -107,12 +106,6 @@ class yg_timer(loader.Module):
         except ValueError:
             await utils.answer(message, "<emoji document_id=5465665476971471368>❌</emoji> <b>Некорректный номер таймера</b>")
 
-    async def client_ready(self, client, db):
-        self.client = client
-
     async def __unload(self):
         for timer_id in self.timers:
             self.timers[timer_id] = False
-
-    async def client_ready(self, client, db):
-        self.client = client

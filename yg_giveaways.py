@@ -35,8 +35,6 @@ from telethon.tl.types import (
     MessageMediaWebPage
 )
 
-from yumlib import yummy
-
 from .. import loader
 
 @loader.tds
@@ -72,7 +70,6 @@ class yg_giveaways(loader.Module):
         self.scraper = cloudscraper.create_scraper()
         self.client = client
         self.solver = TwoCaptcha(self.config["api_key"])
-        await yummy(client)
         self.me = await self.client.get_me()
         self.me_id = self.me.id
         self.extractor = URLExtract()

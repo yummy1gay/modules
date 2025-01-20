@@ -18,7 +18,6 @@ import asyncio
 import logging
 
 from telethon.tl.types import InputMediaDice
-from yumlib import yummy
 import emoji
 
 from .. import loader, security, utils
@@ -42,9 +41,6 @@ class yg_dice(loader.Module):
             },
             "Mapping of emoji to possible values",
         )
-
-    async def client_ready(self, client, db):
-        await yummy(client)
 
     async def count(self, message, emoji_arg):
         if emoji.emoji_count(emoji_arg) == 0:

@@ -15,7 +15,6 @@ __version__ = (1, 4, 8, 8)
 # ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
 
 from telethon.tl.types import User, Chat, Channel
-from yumlib import yummy
 
 from .. import loader, utils
 
@@ -29,9 +28,6 @@ class yg_chatid(loader.Module):
         "user_id": "<b>User ID:</b> <code>{}</code>",
         "not_found": "<b>Not Found</b>"
     }
-
-    async def client_ready(self, client, db):
-        await yummy(client)
 
     async def chatidcmd(self, message):
         """<reply>/@username - узнать ID юзера (на сообщение которого вы ответили), указанного юзера или текущего чата"""

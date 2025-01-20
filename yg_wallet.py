@@ -14,8 +14,6 @@ __version__ = (1, 4, 8, 8)
 # █▄█ █░█ █▀▄▀█ █▀▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄ █▀
 # ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
 
-from yumlib import yummy
-
 from .. import loader
 
 @loader.tds
@@ -44,9 +42,6 @@ class GreetingModule(loader.Module):
             lambda: self.strings("config_xrocket_link")
             )
         )
-
-    async def client_ready(self, client, db):
-        await yummy(client)
 
     async def wcmd(self, message):
         """показать всю информацию для пополнения кошельков"""

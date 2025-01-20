@@ -14,17 +14,12 @@ __version__ = (1, 4, 8, 8)
 # █▄█ █░█ █▀▄▀█ █▀▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄ █▀
 # ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
 
-from yumlib import yummy
-
 from .. import loader, utils
 
 class NotesMod(loader.Module):
     """Модуль заметок (для каждого чата отдельный список)"""
 
     strings = {"name": "yg_notes"}
-
-    async def client_ready(self, client, db):
-        await yummy(client)
 
     async def notecmd(self, message):
         """<текст> добавить новую заметку"""

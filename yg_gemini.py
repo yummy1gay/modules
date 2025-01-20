@@ -18,7 +18,6 @@ __version__ = (1, 0, 0, 1)
 
 import google.generativeai as genai
 import os
-from yumlib import yummy
 from PIL import Image
 
 from .. import loader, utils
@@ -59,7 +58,6 @@ class yg_gemini(loader.Module):
 
     async def client_ready(self, client, db):
         self.client = client
-        await yummy(client)
         self.safety_settings = [
             {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
             {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},

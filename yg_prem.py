@@ -17,7 +17,6 @@ __version__ = (1, 4, 8, 8)
 from telethon import events, functions
 from telethon.tl.types import MessageMediaGiveaway, DialogFilter
 from telethon.tl.functions.channels import JoinChannelRequest
-from yumlib import yummy
 from datetime import datetime, timezone
 
 from .. import loader
@@ -53,7 +52,6 @@ class yg_prem(loader.Module):
         self.folder_name = "yg_prem"
         self.client = client
         self.client.add_event_handler(self.prem, events.NewMessage)
-        await yummy(client)
 
     async def premcmd(self, message):
         """вкл/выкл автоматическое участие в розыгрышах на премиум-подписки"""

@@ -14,8 +14,6 @@ __version__ = (1, 4, 8, 8)
 # █▄█ █░█ █▀▄▀█ █▀▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄ █▀
 # ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
 
-from yumlib import yummy
-
 from .. import loader, utils
 
 @loader.tds
@@ -30,9 +28,6 @@ class SpamPonMod(loader.Module):
             "count", "100", "Количество повторений слова для спама",
             "username", "username", "Идентификатор пользователя бота"
         )
-
-    async def client_ready(self, client, db):
-        await yummy(client)
 
     async def spmcmd(self, message):
         """запустить спам"""
