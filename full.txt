@@ -34,3 +34,4 @@ yg_giveshare
 yg_trigger
 yg_gemini
 SwitchToTelethon
+yg_owner
