@@ -45,7 +45,8 @@ class yg_tgs(loader.Module):
         "not_svg": "<emoji document_id=5278578973595427038>🚫</emoji> <i>Attached file is not an SVG!</i>",
         "not_json": "<emoji document_id=5278578973595427038>🚫</emoji> <i>Attached file is not a JSON!</i>",
         "not_tgs_or_emoji": "<emoji document_id=5276240711795107620>⚠️</emoji> <i>Reply to an animated sticker or custom emoji!</i>",
-        "conversion_error": "<emoji document_id=5278578973595427038>🚫</emoji> <b>Error during conversion:</b> <code>{}</code>"
+        "conversion_error": "<emoji document_id=5278578973595427038>🚫</emoji> <b>Error during conversion:</b> <code>{}</code>",
+        "emoji_not_found": "<emoji document_id=5278578973595427038>🚫</emoji> <i>Custom emoji not found!</i>"
     }
 
     strings_ru = {
@@ -55,7 +56,8 @@ class yg_tgs(loader.Module):
         "not_svg": "<emoji document_id=5278578973595427038>🚫</emoji> <i>Прикрепленный файл не является SVG!</i>",
         "not_json": "<emoji document_id=5278578973595427038>🚫</emoji> <i>Прикрепленный файл не является JSON!</i>",
         "not_tgs_or_emoji": "<emoji document_id=5276240711795107620>⚠️</emoji> <i>Ответь на анимированный стикер или кастомный эмодзи!</i>",
-        "conversion_error": "<emoji document_id=5278578973595427038>🚫</emoji> <b>Ошибка при конвертации:</b> <code>{}</code>"
+        "conversion_error": "<emoji document_id=5278578973595427038>🚫</emoji> <b>Ошибка при конвертации:</b> <code>{}</code>",
+        "emoji_not_found": "<emoji document_id=5278578973595427038>🚫</emoji> <i>Кастомный эмодзи не найден!</i>"
     }
 
     @loader.command(ru_doc="<reply to .svg> - конвертировать svg в tgs")
@@ -254,6 +256,37 @@ class yg_tgs(loader.Module):
                     force_document=False,
                     reply_to=reply.id
                 )
+        else:
+            await utils.answer(msg, self.strings["not_tgs_or_emoji"])
+
+    @loader.command(ru_doc="<reply to custom emoji> - конвертировать кастом эмодзи в tgs")
+    async def emoji2tgscmd(self, msg: Message):
+        """<reply to custom emoji> - convert custom emoji to tgs"""
+        if not msg.reply_to_msg_id:
+            await utils.answer(msg, self.strings["no_reply"])
+            return
+        
+        await utils.answer(msg, self.strings["converting"])
+        
+        reply = await msg.get_reply_message()
+        
+        if reply.entities and isinstance(reply.entities[0], MessageEntityCustomEmoji):
+            emoji_id = reply.entities[0].document_id
+            data = await msg.client(GetCustomEmojiDocumentsRequest(document_id=[emoji_id]))
+            
+            if data:
+                tgs_buffer = io.BytesIO()
+                await msg.client.download_media(data[0], tgs_buffer)
+                tgs_buffer.seek(0)
+                
+                await utils.answer(
+                    msg,
+                    tgs_buffer.getvalue(),
+                    attributes=[types.DocumentAttributeFilename("sticker.tgs")],
+                    reply_to=reply
+                )
+            else:
+                await utils.answer(msg, self.strings["emoji_not_found"])
         else:
             await utils.answer(msg, self.strings["not_tgs_or_emoji"])
 
