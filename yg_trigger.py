@@ -21,7 +21,7 @@ import os
 
 @loader.tds
 class yg_trigger(loader.Module):
-    """Триггер-модуль. Документация: ямме.рф/триггер"""
+    """Триггер-модуль. Документация: kok.gay/trigger"""
 
     strings = {"name": "yg_trigger"}
 
