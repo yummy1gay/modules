@@ -14,6 +14,8 @@ __version__ = (1, 4, 8, 8)
 # █▄█ █░█ █▀▄▀█ █▀▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄ █▀
 # ░█░ █▄█ █░▀░█ █░▀░█ ░█░   █░▀░█ █▄█ █▄▀ ▄█
 
+import os
+
 from .. import loader, utils
 
 @loader.tds
@@ -54,15 +56,24 @@ class yg_xxx(loader.Module):
 
             await message.edit("<emoji document_id=5215484787325676090>🕐</emoji> <b>Загружаю...</b>")
 
-            x = link
-            c = x.split('/')[3]
-            i = int(x.split('/')[-1])
+            x = link.strip("/")
+            parts = x.split("/")
+
+            i = int(parts[-1])
+
+            if "c" in parts:
+                c_index = parts.index("c")
+                c = int("-100" + parts[c_index + 1])
+            else:
+                c = parts[-2]
 
             z = message.client
             q = await z.get_messages(c, ids=i)
+            fpath = None
 
             if q.media:
                 f = await z.download_media(q.media)
+                fpath = f if isinstance(f, str) else None
 
                 if q.message:
                     if username:
@@ -89,3 +100,10 @@ class yg_xxx(loader.Module):
 
         except Exception as e:
             await message.edit(f"<b>Ошибка: {e}</b>")
+
+        finally:
+            try:
+                if fpath and os.path.exists(fpath):
+                    os.remove(fpath)
+            except Exception:
+                pass
