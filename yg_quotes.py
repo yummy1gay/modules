@@ -23,6 +23,7 @@ from time import gmtime
 from typing import List, Optional, Tuple, Union
 from PIL import Image, ImageDraw
 from telethon.tl import types
+from telethon.extensions import html
 from telethon.tl.patched import Message
 
 from .. import loader, utils
@@ -245,7 +246,7 @@ class Quotes(loader.Module):
         • .fq user1 текст; user2 текст — несколько сообщений
         """
         try:
-            raw=utils.get_args_raw(m); rep=await m.get_reply_message()
+            raw=utils.get_args_html(m); rep=await m.get_reply_message()
             if not (raw or rep): return await utils.answer(m,self.strings["no_args_or_reply"])
             st= await utils.answer(m,self.strings["processing"])
             try: js=await self.fake(raw,rep)
@@ -373,16 +374,19 @@ class Quotes(loader.Module):
                     u1,t1=await tok(part); u2,t2=None,None
                 if not u1: continue
 
+                txt1, ents1 = html.parse(t1) if t1 else ("", [])
+
                 name=telethon.utils.get_display_name(u1); f,l=Dick.split(name)
                 ava=await Dick.ava(self.client,u1.id)
 
                 if u2:
+                    txt2, ents2 = html.parse(t2) if t2 else ("", [])
                     name2=telethon.utils.get_display_name(u2); ava2=await Dick.ava(self.client,u2.id)
-                    rb={"name":name2,"text":t2,"entities":[],"chatId":u2.id,"from":{"name":name2,"photo":{"url":ava2} if ava2 else {}}}
+                    rb={"name":name2,"text":txt2,"entities":Dick.ents(ents2),"chatId":u2.id,"from":{"name":name2,"photo":{"url":ava2} if ava2 else {}}}
 
                 msg={"from":{"id":u1.id,"first_name":getattr(u1,"first_name","") or f,"last_name":getattr(u1,"last_name","") or l,
                              "username":getattr(u1,"username",None),"name":name,"photo":{"url":ava} if ava else {}},
-                     "text":t1,"entities":[], "avatar":True}
+                     "text":txt1,"entities":Dick.ents(ents1), "avatar":True}
 
                 es=getattr(u1,"emoji_status",None)
                 if getattr(es,"document_id",None): msg["from"]["emoji_status"]=str(es.document_id)
