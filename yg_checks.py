@@ -96,7 +96,7 @@ class Passworder: #beto
     async def generate(self, description: str) -> dict:
         try:
             configure(api_key=self.api_key)
-            model_name = self.model_name if self.model_name else "gemini-2.0-flash-exp"
+            model_name = self.model_name if self.model_name else "gemini-flash-latest"
             self.model = GenerativeModel(
                 model_name,
                 system_instruction=self.prompt,
@@ -267,7 +267,7 @@ class yg_checks(loader.Module):
             ),
             loader.ConfigValue(
                 "gemini_model_name",
-                "gemini-2.0-flash-exp",
+                "gemini-flash-latest",
                 doc=lambda: self.strings("gemini_model_name_desc"),
                 validator=loader.validators.String(),
             ),
@@ -942,3 +942,4 @@ class yg_checks(loader.Module):
                               f"Firefox/{browser_version}.0")
 
         return user_agent
+
